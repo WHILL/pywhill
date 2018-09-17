@@ -1,0 +1,156 @@
+#!/usr/bin/env python3
+
+# whill
+# Copyright (c) 2018 WHILL, Inc.
+# This software is released under the MIT License.
+
+from enum import IntEnum, auto
+from whill_data import Data3D, Joy, Battery, Motor, SpeedProfile
+from whill_packet import dispatch_payload
+
+
+class ComWHILL():
+
+    class CommandID(IntEnum):
+        START = 0
+        STOP = auto()
+        SET_POWER = auto()
+        SET_JOYSTICK = auto()
+        SET_SPEED_PROFILE = auto()
+        SET_BATTERY_VOLTAGE_OUT = auto()
+
+    class UserControl(IntEnum):
+        DISABLE = 0
+        ENABLE = auto()
+
+    class PowerCommand(IntEnum):
+        OFF = 0
+        ON = auto()
+
+    __CMD_LENGTH_TABLE = {
+        CommandID.START: 5,
+        CommandID.SET_POWER: 2,
+        CommandID.SET_JOYSTICK: 4,
+        CommandID.SET_SPEED_PROFILE: 11,
+        CommandID.SET_BATTERY_VOLTAGE_OUT: 2,
+    }
+
+    __PROTOCOL_SIGN = 0xAF
+
+    def __init__(self, port, timeout=None):
+        self.com = serial.Serial(port=port, baudrate=38400, timeout=timeout)
+        self.acceleration = Data3D()
+        self.gyro = Data3D()
+        self.virtual_joy = Joy()
+        self.joy = Joy()
+        self.speed_profile = SpeedProfile()
+        self.right_motor = Motor()
+        self.left_motor = Motor()
+        self.battery = Battery()
+        self.power_status = False
+        self.speed_mode_indicator = 0
+        self.error_code = 0
+        self.seq_data_set_0 = 0
+        self.seq_data_set_1 = 0
+        self.latest_received_data_set = 0
+        self.__callback_dict = {'data_set_0': None, 'data_set_1': None, 'power_on': None}
+
+    def register_callback(self, event, func=None):
+        ret = False
+        if event in self.__callback_dict:
+            self.__callback_dict[event] = func
+            ret = True
+        return ret
+
+    def fire_callback(self, event):
+        if self.__callback_dict[event] is not None:
+            return self.__callback_dict[event]()
+
+    def refresh(self):
+        is_refreshed = False
+        while self.com.in_waiting > 0:
+            data_length, payload = self.receive_data()
+            if data_length > 0:
+                is_valid = self.validate_received_data(data_length, payload)
+                if is_valid:
+                    is_known_payload = dispatch_payload(self, payload)
+                    if is_known_payload:
+                        is_refreshed = True
+        return is_refreshed
+
+    def receive_data(self):
+        data_length = -1
+        payload = []
+        read_byte = int.from_bytes(self.com.read(size=1), 'big', signed=False)
+        if read_byte == self.__PROTOCOL_SIGN:
+            data_length = int.from_bytes(self.com.read(size=1), 'big', signed=False)
+            payload = self.com.read(size=data_length)
+        return data_length, payload
+
+    def validate_received_data(self, data_length, payload):
+        checksum = 0
+        checksum ^= self.__PROTOCOL_SIGN
+        checksum ^= data_length
+        for x in payload:
+            checksum ^= x
+        if checksum == 0:
+            is_valid = True
+        else:
+            is_valid = False
+        return is_valid
+
+    def send_command(self, payload):
+        length = self.__CMD_LENGTH_TABLE[payload[0]]
+        command_bytes = [self.__PROTOCOL_SIGN, length + 1]
+        command_bytes.extend(payload)
+        checksum = 0
+        for i, x in enumerate(command_bytes):
+            if x < 0:
+                x = int.from_bytes(x.to_bytes(length=1, byteorder='big', signed=True), byteorder='big', signed=False)
+                command_bytes[i] = x
+            checksum ^= x
+        command_bytes.append(checksum)
+        #print(command_bytes)
+        return self.com.write(bytes(command_bytes))
+
+    def send_joystick(self, longitudinal=0, lateral=0):
+        command_bytes = [self.CommandID.SET_JOYSTICK, self.UserControl.DISABLE, longitudinal, lateral]
+        return self.send_command(command_bytes)
+
+    def send_stop(self):
+        return self.send_joystick()
+
+    def release_joystick(self):
+        command_bytes = [self.CommandID.SET_JOYSTICK, self.UserControl.ENABLE, 0, 0]
+        return self.send_command(command_bytes)
+
+    def start_data_stream(self, interval_msec, data_set_number, speed_mode):
+        command_bytes = [self.CommandID.START, data_set_number, interval_msec >> 8, interval_msec & 0xFF, speed_mode]
+        return self.send_command(command_bytes)
+
+    def stop_data_stream(self):
+        command_bytes = [self.CommandID.STOP]
+        return self.send_command(command_bytes)
+
+    def send_power_on(self):
+        command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.ON]
+        return self.send_command(command_bytes)
+
+    def send_power_off(self):
+        command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.OFF]
+        return self.send_command(command_bytes)
+
+    def set_speed_profile(self, speed_mode,
+                          forward_speed_max, forward_accel, forward_decel,
+                          reverse_speed_max, reverse_accel, reverse_decel,
+                          turn_speed_max,    turn_accel,    turn_decel):
+        command_bytes = [self.CommandID.SET_SPEED_PROFILE,
+                         speed_mode,
+                         forward_speed_max, forward_accel, forward_decel,
+                         reverse_speed_max, reverse_accel, reverse_decel,
+                         turn_speed_max,    turn_accel,    turn_decel]
+        return self.send_command(command_bytes)
+
+    def set_battery_voltage_output_mode(self, vbatt_on_off):
+        command_bytes = [self.CommandID.SET_BATTERY_VOLTAGE_OUT, vbatt_on_off]
+        return self.send_command(command_bytes)
