@@ -39,7 +39,7 @@ class ComWHILL():
 
     def __init__(self, port, timeout=None):
         self.com = serial.Serial(port=port, baudrate=38400, timeout=timeout)
-        self.acceleration = Data3D()
+        self.accelerometer = Data3D()
         self.gyro = Data3D()
         self.virtual_joy = Joy()
         self.joy = Joy()
@@ -113,8 +113,8 @@ class ComWHILL():
         #print(command_bytes)
         return self.com.write(bytes(command_bytes))
 
-    def send_joystick(self, longitudinal=0, lateral=0):
-        command_bytes = [self.CommandID.SET_JOYSTICK, self.UserControl.DISABLE, longitudinal, lateral]
+    def send_joystick(self, front=0, side=0):
+        command_bytes = [self.CommandID.SET_JOYSTICK, self.UserControl.DISABLE, front, side]
         return self.send_command(command_bytes)
 
     def send_stop(self):
@@ -124,7 +124,7 @@ class ComWHILL():
         command_bytes = [self.CommandID.SET_JOYSTICK, self.UserControl.ENABLE, 0, 0]
         return self.send_command(command_bytes)
 
-    def start_data_stream(self, interval_msec, data_set_number, speed_mode):
+    def start_data_stream(self, interval_msec, data_set_number=1, speed_mode=5):
         command_bytes = [self.CommandID.START, data_set_number, interval_msec >> 8, interval_msec & 0xFF, speed_mode]
         return self.send_command(command_bytes)
 
@@ -138,6 +138,10 @@ class ComWHILL():
 
     def send_power_off(self):
         command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.OFF]
+        return self.send_command(command_bytes)
+
+    def set_power(self, power_state_command):
+        command_bytes = [self.CommandID.SET_POWER, power_state_command]
         return self.send_command(command_bytes)
 
     def set_speed_profile(self, speed_mode,

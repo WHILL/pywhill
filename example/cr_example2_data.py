@@ -18,7 +18,7 @@ while True:
         whill.start_data_stream(1000, 1, request_speed_mode)
     else:
         level, current = whill.battery.values()
-        print(whill.acceleration)
+        print(whill.accelerometer)
         print(whill.gyro)
         print(whill.joy)
         print('Battery Status: remaining capacity {level}%, current draiwng {current}mA'.format(level=level,
