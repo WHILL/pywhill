@@ -11,8 +11,8 @@ WHILL Model CR SDK for Python
 
 ## OS Support
 - [x] Windows 10
-- [ ] MacOS X (Currently under verification. Any report and/or pull request is more than welcome)
-- [ ] Ubuntu 16.04 (Currently under verification. Any report and/or pull request is more than welcome)
+- [ ] MacOS X (Currently under migration. Any pull request is more than welcome)
+- [ ] Ubuntu 16.04 (Currently under migration. Any pull request is more than welcome)
 
 ## Getting Started
 Clone or download this repository at any place you want.
