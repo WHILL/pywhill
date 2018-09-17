@@ -48,7 +48,7 @@ Command WHILL to stop report WHILL status.
 ### Manipulation
 
 ```python
-WHILL::set_joy_stick(front=<Integer -100~100>, side=<Integer -100~100>)
+<your_obj_name>.set_joy_stick(front=<Integer -100~100>, side=<Integer -100~100>)
 ```
 Manipulate a WHILL via this command.
 Both `front` and `side` are integer values with range -100 ~ 100.
