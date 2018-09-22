@@ -4,6 +4,7 @@
 # Copyright (c) 2018 WHILL, Inc.
 # This software is released under the MIT License.
 
+import serial
 from enum import IntEnum, auto
 from whill_data import Data3D, Joy, Battery, Motor, SpeedProfile
 from whill_packet import dispatch_payload
