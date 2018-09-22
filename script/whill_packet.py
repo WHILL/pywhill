@@ -10,6 +10,8 @@ def calc_time_diff(past, current):
         diff = (201 - past) + current
     return diff
 
+def s8(value):
+    return -(value & 0b10000000) | (value & 0b01111111)
 def parse_data_set_0(self, payload):
     speed_mode = payload[0]
     self.speed_profile[speed_mode]['forward_speed'] = payload[1]
@@ -32,8 +34,8 @@ def parse_data_set_1(self, payload):
     self.gyro['x'] = int.from_bytes(payload[6:7], 'big', signed=True) * 4.375
     self.gyro['y'] = int.from_bytes(payload[8:9], 'big', signed=True) * 4.375
     self.gyro['z'] = int.from_bytes(payload[10:11], 'big', signed=True) * 4.375
-    self.joy['front'] = payload[12]
-    self.joy['side'] = payload[13]
+    self.joy['front'] = s8(payload[12])
+    self.joy['side'] = s8(payload[13])
     self.battery['level'] = payload[14]
     self.battery['current'] = int.from_bytes(payload[15:16], 'big', signed=True) * 2.0
     self.right_motor['angle'] = int.from_bytes(payload[17:18], 'big', signed=True) * 0.001
