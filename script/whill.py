@@ -51,6 +51,9 @@ class ComWHILL():
         self.power_status = False
         self.speed_mode_indicator = 0
         self.error_code = 0
+        self.timestamp_past = 0
+        self.timestamp_current = 0
+        self.time_diff_ms = 0
         self.seq_data_set_0 = 0
         self.seq_data_set_1 = 0
         self.latest_received_data_set = 0
