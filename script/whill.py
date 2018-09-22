@@ -5,6 +5,7 @@
 # This software is released under the MIT License.
 
 import serial
+import threading
 from enum import IntEnum, auto
 from whill_data import Data3D, Joy, Battery, Motor, SpeedProfile
 from whill_packet import dispatch_payload
@@ -55,6 +56,8 @@ class ComWHILL():
         self.seq_data_set_1 = 0
         self.latest_received_data_set = 0
         self.__callback_dict = {'data_set_0': None, 'data_set_1': None, 'power_on': None}
+        self.__timeout_count = 0
+        self.__TIMEOUT_MAX = 60000 # 60 seconds
 
     def register_callback(self, event, func=None):
         ret = False
@@ -159,3 +162,28 @@ class ComWHILL():
     def set_battery_voltage_output_mode(self, vbatt_on_off):
         command_bytes = [self.CommandID.SET_BATTERY_VOLTAGE_OUT, vbatt_on_off]
         return self.send_command(command_bytes)
+
+    def hold_joy_core(self, front, side, timeout=1000):
+        if self.__timeout_count < timeout:
+            # print(self.__timeout_count)
+            # print(timeout)
+            self.__timeout_count += 50  # millisecond
+            self.send_joystick(front=front, side=side)
+            t = threading.Timer(function=self.hold_joy_core,
+                                kwargs={'front': front, 'side': side, 'timeout': timeout},
+                                interval=0.05)
+            t.start()
+        else:
+            self.__timeout_count = 0
+
+    def unhold_joy(self):
+        self.__timeout_count = self.__TIMEOUT_MAX + 1
+
+    def hold_joy(self, front, side, timeout=1000):
+        if timeout > self.__TIMEOUT_MAX:
+            print('Timeout must be equal to or less than {timeout_max}'.format(timeout_max=self.__TIMEOUT_MAX))
+            timeout = self.__TIMEOUT_MAX
+        self.__timeout_count = 0
+        self.send_joystick(front, side)
+        t = threading.Thread(target=self.hold_joy_core, kwargs={'front': front, 'side': side, 'timeout': timeout})
+        t.start()
