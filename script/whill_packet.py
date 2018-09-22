@@ -4,14 +4,18 @@
 # Copyright (c) 2018 WHILL, Inc.
 # This software is released under the MIT License.
 
+
 def calc_time_diff(past, current):
     diff = current - past
     if abs(diff) >= 100:
         diff = (201 - past) + current
     return diff
 
+
 def s8(value):
     return -(value & 0b10000000) | (value & 0b01111111)
+
+
 def parse_data_set_0(self, payload):
     speed_mode = payload[0]
     self.speed_profile[speed_mode]['forward_speed'] = payload[1]
@@ -28,26 +32,26 @@ def parse_data_set_0(self, payload):
 
 
 def parse_data_set_1(self, payload):
-    self.accelerometer['x'] = int.from_bytes(payload[0:1], 'big', signed=True) * 0.122
-    self.accelerometer['y'] = int.from_bytes(payload[2:3], 'big', signed=True) * 0.122
-    self.accelerometer['z'] = int.from_bytes(payload[4:5], 'big', signed=True) * 0.122
-    self.gyro['x'] = int.from_bytes(payload[6:7], 'big', signed=True) * 4.375
-    self.gyro['y'] = int.from_bytes(payload[8:9], 'big', signed=True) * 4.375
-    self.gyro['z'] = int.from_bytes(payload[10:11], 'big', signed=True) * 4.375
+    self.accelerometer['x'] = int.from_bytes(payload[0:2], 'big', signed=True) * 0.122
+    self.accelerometer['y'] = int.from_bytes(payload[2:4], 'big', signed=True) * 0.122
+    self.accelerometer['z'] = int.from_bytes(payload[4:6], 'big', signed=True) * 0.122
+    self.gyro['x'] = int.from_bytes(payload[6:8], 'big', signed=True) * 4.375
+    self.gyro['y'] = int.from_bytes(payload[8:10], 'big', signed=True) * 4.375
+    self.gyro['z'] = int.from_bytes(payload[10:12], 'big', signed=True) * 4.375
     self.joy['front'] = s8(payload[12])
     self.joy['side'] = s8(payload[13])
     self.battery['level'] = payload[14]
-    self.battery['current'] = int.from_bytes(payload[15:16], 'big', signed=True) * 2.0
-    self.right_motor['angle'] = int.from_bytes(payload[17:18], 'big', signed=True) * 0.001
-    self.left_motor['angle'] = int.from_bytes(payload[19:20], 'big', signed=True) * 0.001
-    self.right_motor['speed'] = int.from_bytes(payload[21:22], 'big', signed=True) * 0.004
-    self.left_motor['speed'] = int.from_bytes(payload[23:24], 'big', signed=True) * 0.004
+    self.battery['current'] = int.from_bytes(payload[15:17], 'big', signed=True) * 2.0
+    self.right_motor['angle'] = int.from_bytes(payload[17:19], 'big', signed=True) * 0.001
+    self.left_motor['angle'] = int.from_bytes(payload[19:21], 'big', signed=True) * 0.001
+    self.right_motor['speed'] = int.from_bytes(payload[21:23], 'big', signed=True) * 0.004
+    self.left_motor['speed'] = int.from_bytes(payload[23:25], 'big', signed=True) * 0.004
     self.power_status = payload[25]
     self.speed_mode_indicator = payload[26]
     self.error_code = payload[27]
 
     self.timestamp_past = self.timestamp_current
-    self.timestamp_current = s8(payload[28])
+    self.timestamp_current = payload[28]
     self.time_diff_ms = calc_time_diff(self.timestamp_past, self.timestamp_current)
 
     self.seq_data_set_1 += 1
