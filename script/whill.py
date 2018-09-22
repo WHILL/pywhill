@@ -58,6 +58,7 @@ class ComWHILL():
         self.__callback_dict = {'data_set_0': None, 'data_set_1': None, 'power_on': None}
         self.__timeout_count = 0
         self.__TIMEOUT_MAX = 60000 # 60 seconds
+        self.__stop_event = threading.Event()
 
     def register_callback(self, event, func=None):
         ret = False
@@ -164,9 +165,11 @@ class ComWHILL():
         return self.send_command(command_bytes)
 
     def hold_joy_core(self, front, side, timeout=1000):
+        if self.__stop_event.is_set():
+            self.__timeout_count = self.__TIMEOUT_MAX + 1
+            self.__stop_event.clear()
+
         if self.__timeout_count < timeout:
-            # print(self.__timeout_count)
-            # print(timeout)
             self.__timeout_count += 50  # millisecond
             self.send_joystick(front=front, side=side)
             t = threading.Timer(function=self.hold_joy_core,
@@ -177,7 +180,7 @@ class ComWHILL():
             self.__timeout_count = 0
 
     def unhold_joy(self):
-        self.__timeout_count = self.__TIMEOUT_MAX + 1
+        self.__stop_event.set()
 
     def hold_joy(self, front, side, timeout=1000):
         if timeout > self.__TIMEOUT_MAX:
