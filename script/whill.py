@@ -5,6 +5,8 @@
 # This software is released under the MIT License.
 
 import serial
+import threading
+import time
 from enum import IntEnum, auto
 from whill_data import Data3D, Joy, Battery, Motor, SpeedProfile
 from whill_packet import dispatch_payload
@@ -58,6 +60,10 @@ class ComWHILL():
         self.seq_data_set_1 = 0
         self.latest_received_data_set = 0
         self.__callback_dict = {'data_set_0': None, 'data_set_1': None, 'power_on': None}
+        self.__timeout_count = 0
+        self.__TIMEOUT_MAX = 60000 # 60 seconds
+        self.thread = threading.Thread(target=self.hold_joy_core, kwargs={'front': 0, 'side': 0, 'timeout': 1000})
+        self.__stop_event = threading.Event()
 
     def register_callback(self, event, func=None):
         ret = False
@@ -114,7 +120,7 @@ class ComWHILL():
                 command_bytes[i] = x
             checksum ^= x
         command_bytes.append(checksum)
-        #print(command_bytes)
+        # print(command_bytes)
         return self.com.write(bytes(command_bytes))
 
     def send_joystick(self, front=0, side=0):
@@ -162,3 +168,30 @@ class ComWHILL():
     def set_battery_voltage_output_mode(self, vbatt_on_off):
         command_bytes = [self.CommandID.SET_BATTERY_VOLTAGE_OUT, vbatt_on_off]
         return self.send_command(command_bytes)
+
+    def hold_joy_core(self, front, side, timeout=1000):
+        while self.__timeout_count < timeout:
+            if self.__stop_event.is_set():
+                self.__timeout_count = self.__TIMEOUT_MAX + 1
+                self.__stop_event.clear()
+            self.__timeout_count += 100  # millisecond
+            # print(self.__timeout_count)
+            self.send_joystick(front=front, side=side)
+            time.sleep(0.10)
+        else:
+            self.__timeout_count = 0
+
+    def unhold_joy(self):
+        self.__stop_event.set()
+
+    def hold_joy(self, front, side, timeout=1000):
+        if self.thread.is_alive():
+            self.unhold_joy()
+            self.thread.join()
+        self.__stop_event.clear()
+        if timeout > self.__TIMEOUT_MAX:
+            print('Timeout must be equal to or less than {timeout_max}'.format(timeout_max=self.__TIMEOUT_MAX))
+            timeout = self.__TIMEOUT_MAX
+        self.__timeout_count = 0
+        self.thread = threading.Thread(target=self.hold_joy_core, kwargs={'front': front, 'side': side, 'timeout': timeout})
+        self.thread.start()
