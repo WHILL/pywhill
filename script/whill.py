@@ -187,6 +187,7 @@ class ComWHILL():
             print('Timeout must be equal to or less than {timeout_max}'.format(timeout_max=self.__TIMEOUT_MAX))
             timeout = self.__TIMEOUT_MAX
         self.__timeout_count = 0
-        self.send_joystick(front, side)
-        t = threading.Thread(target=self.hold_joy_core, kwargs={'front': front, 'side': side, 'timeout': timeout})
-        t.start()
+        while not self.__stop_event.is_set():
+            self.send_joystick(front, side)
+        # t = threading.Thread(target=self.hold_joy_core, kwargs={'front': front, 'side': side, 'timeout': timeout})
+        # t.start()
