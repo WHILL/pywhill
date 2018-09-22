@@ -165,6 +165,22 @@ class ComWHILL():
                          turn_speed_max,    turn_accel,    turn_decel]
         return self.send_command(command_bytes)
 
+    def set_speed_profile_via_dict(self, speed_mode, profile):
+        ret = False
+        if speed_mode in range(0, 6):
+            self.set_speed_profile(speed_mode,
+                                  profile['forward_speed'],
+                                  profile['forward_acceleration'],
+                                  profile['forward_deceleration'],
+                                  profile['reverse_speed'],
+                                  profile['reverse_acceleration'],
+                                  profile['reverse_deceleration'],
+                                  profile['turn_speed'],
+                                  profile['turn_acceleration'],
+                                  profile['turn_deceleration'])
+            ret = True
+        return ret
+
     def set_battery_voltage_output_mode(self, vbatt_on_off):
         command_bytes = [self.CommandID.SET_BATTERY_VOLTAGE_OUT, vbatt_on_off]
         return self.send_command(command_bytes)
