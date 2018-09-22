@@ -4,6 +4,12 @@
 # Copyright (c) 2018 WHILL, Inc.
 # This software is released under the MIT License.
 
+def calc_time_diff(past, current):
+    diff = current - past
+    if abs(diff) >= 100:
+        diff = (201 - past) + current
+    return diff
+
 def parse_data_set_0(self, payload):
     speed_mode = payload[0]
     self.speed_profile[speed_mode]['forward_speed'] = payload[1]
@@ -37,6 +43,11 @@ def parse_data_set_1(self, payload):
     self.power_status = payload[25]
     self.speed_mode_indicator = payload[26]
     self.error_code = payload[27]
+
+    self.timestamp_past = self.timestamp_current
+    self.timestamp_current = s8(payload[28])
+    self.time_diff_ms = calc_time_diff(self.timestamp_past, self.timestamp_current)
+
     self.seq_data_set_1 += 1
     self.fire_callback('data_set_1')
 
