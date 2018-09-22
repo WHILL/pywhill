@@ -20,9 +20,9 @@ def parse_data_set_0(self, payload):
 
 
 def parse_data_set_1(self, payload):
-    self.acceleration['x'] = int.from_bytes(payload[0:1], 'big', signed=True) * 0.122
-    self.acceleration['y'] = int.from_bytes(payload[2:3], 'big', signed=True) * 0.122
-    self.acceleration['z'] = int.from_bytes(payload[4:5], 'big', signed=True) * 0.122
+    self.accelerometer['x'] = int.from_bytes(payload[0:1], 'big', signed=True) * 0.122
+    self.accelerometer['y'] = int.from_bytes(payload[2:3], 'big', signed=True) * 0.122
+    self.accelerometer['z'] = int.from_bytes(payload[4:5], 'big', signed=True) * 0.122
     self.gyro['x'] = int.from_bytes(payload[6:7], 'big', signed=True) * 4.375
     self.gyro['y'] = int.from_bytes(payload[8:9], 'big', signed=True) * 4.375
     self.gyro['z'] = int.from_bytes(payload[10:11], 'big', signed=True) * 4.375
