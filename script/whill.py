@@ -107,6 +107,13 @@ class ComWHILL():
                         is_refreshed = True
         return is_refreshed
 
+    def sleep(self, secs, step_sec=0.01):
+        current_sec = 0
+        while current_sec < secs:
+            self.refresh()
+            time.sleep(step_sec)
+            current_sec += step_sec
+
     def receive_data(self):
         data_length = -1
         payload = []
@@ -163,15 +170,17 @@ class ComWHILL():
 
     def send_power_on(self):
         command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.ON]
+        self.send_command(command_bytes)
+        time.sleep(0.200)
         return self.send_command(command_bytes)
 
     def send_power_off(self):
         command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.OFF]
         return self.send_command(command_bytes)
 
-    def set_power(self, power_state_command):
-        command_bytes = [self.CommandID.SET_POWER, power_state_command]
-        return self.send_command(command_bytes)
+#    def set_power(self, power_state_command):
+#        command_bytes = [self.CommandID.SET_POWER, power_state_command]
+#        return self.send_command(command_bytes)
 
     def set_speed_profile(self, speed_mode,
                           forward_speed_max, forward_accel, forward_decel,
