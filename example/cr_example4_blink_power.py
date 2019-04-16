@@ -7,13 +7,17 @@
 import time
 from whill import ComWHILL
 
+def power_on_callback():
+    print('WHILL wakes up')
 
 def main():
-    whill = ComWHILL(port='COM4')
+    whill = ComWHILL(port='/dev/ttyUSB0')
+    whill.register_callback('power_on', power_on_callback)
     while True:
-        time.sleep(3)
+        whill.sleep(3)
         whill.send_power_off()
-        time.sleep(3)
+
+        whill.sleep(3)
         whill.send_power_on()
 
 
