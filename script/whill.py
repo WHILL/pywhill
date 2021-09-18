@@ -8,7 +8,7 @@ import serial
 import threading
 import time
 from enum import IntEnum, auto
-from whill_data import Data3D, Joy, Battery, Motor, SpeedProfile
+from whill_data import Joy, Battery, Motor, SpeedProfile
 from whill_packet import dispatch_payload
 
 
@@ -52,8 +52,6 @@ class ComWHILL():
         Attributes
         ----------
         com (serial.Serial): Serial object for communicating to WHILL.
-        accelerometer (whill_data.Data3D): 3D Acceleration (x, y, z).
-        gyro (whill_data.Data3D): 3D gyro (x, y, z).
         virtual_joy (whill_data.Joy): Currently unused.
         joy (whill_data.Joy): Input value from WHILL's joystick controller.
         speed_profile (whill_data.SpeedProfile): Speed profile array for six settings.
@@ -61,8 +59,6 @@ class ComWHILL():
         left_motor (whill_data.Motor): Left motor status (angle, speed).
         """
         self.com = serial.Serial(port=port, baudrate=38400, timeout=timeout)
-        self.accelerometer = Data3D()
-        self.gyro = Data3D()
         self.virtual_joy = Joy()
         self.joy = Joy()
         self.speed_profile = SpeedProfile()
