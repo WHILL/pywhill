@@ -96,10 +96,8 @@ class ComWHILL():
         while self.com.in_waiting > 0:
             data_length, payload = self.receive_data()
             if data_length > 0:
-                is_valid = self.validate_received_data(data_length, payload)
-                if is_valid:
-                    is_known_payload = dispatch_payload(self, payload)
-                    if is_known_payload:
+                if self.validate_received_data(data_length, payload):
+                    if dispatch_payload(self, payload):
                         is_refreshed = True
         return is_refreshed
 
