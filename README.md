@@ -12,13 +12,13 @@ For general questions and requests, please visit our [product page](https://whil
 - pySerial (https://github.com/pyserial/pyserial)
 
 ## OS Support
-- [x] Windows 10
-- [ ] MacOS X (Currently under migration. Any pull request is more than welcome)
-- [x] Ubuntu 16.04
-- [x] Ubuntu 18.04
+- Windows 10
+- MacOS X
+- Ubuntu 16.04
+- Ubuntu 18.04
 
 ## Getting Started
-Clone or download this repository at any place you want.
+Clone or download this repository at any place you want, or this package is avalable on [PyPI](https://pypi.org/project/whill/).
 
 ## APIs
 
