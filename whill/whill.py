@@ -8,8 +8,8 @@ import serial
 import threading
 import time
 from enum import IntEnum, auto
-from whill_data import Joy, Battery, Motor, SpeedProfile
-from whill_packet import dispatch_payload
+from . import whill_data as wd
+from . import whill_packet as wp
 
 
 class ComWHILL():
@@ -59,12 +59,12 @@ class ComWHILL():
         left_motor (whill_data.Motor): Left motor status (angle, speed).
         """
         self.com = serial.Serial(port=port, baudrate=38400, timeout=timeout)
-        self.virtual_joy = Joy()
-        self.joy = Joy()
-        self.speed_profile = SpeedProfile()
-        self.right_motor = Motor()
-        self.left_motor = Motor()
-        self.battery = Battery()
+        self.virtual_joy = wd.Joy()
+        self.joy = wd.Joy()
+        self.speed_profile = wd.SpeedProfile()
+        self.right_motor = wd.Motor()
+        self.left_motor = wd.Motor()
+        self.battery = wd.Battery()
         self.power_status = False
         self.speed_mode_indicator = 0
         self.error_code = 0
@@ -97,7 +97,7 @@ class ComWHILL():
             data_length, payload = self.receive_data()
             if data_length > 0:
                 if self.validate_received_data(data_length, payload):
-                    if dispatch_payload(self, payload):
+                    if wp.dispatch_payload(self, payload):
                         is_refreshed = True
         return is_refreshed
 
