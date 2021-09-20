@@ -73,18 +73,11 @@ Enable/Disable power supply to the interface connector. `True` to enable power s
 
 ### Sensors and Status
 
-### Accelerometer
-```python
-<your_obj_name>.accelerometer
-```
-Accelerometer mounted on body.
+### Accelerometer *deprecated*
+Accelerometer API has been disabled since v0.2.0.
 
-#### Gyro
-```python
-<your_obj_name>.gyro
-```
-Gyro sensor mounted on body.
-
+#### Gyro *deprecated*
+Gyro API has been disabled since v0.2.0.
 
 #### Battery
 ```python
