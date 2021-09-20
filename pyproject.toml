@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "pywhill"
+version = "0.2.0"
+description = "WHILL Model CR SDK for Python"
+authors = ["seiya0412 <seiya.shimizu@whill.inc>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+pyserial = "^3.5"
+
+[tool.poetry.dev-dependencies]
+pyserial = "^3.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
