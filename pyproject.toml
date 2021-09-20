@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pywhill"
+name = "whill"
 version = "0.2.0"
 description = "WHILL Model CR SDK for Python"
 authors = ["seiya0412 <seiya.shimizu@whill.inc>"]
