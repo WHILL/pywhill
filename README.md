@@ -20,6 +20,10 @@ For general questions and requests, please visit our [product page](https://whil
 ## Getting Started
 Clone or download this repository at any place you want, or this package is avalable on [PyPI](https://pypi.org/project/whill/).
 
+```
+python3 -m pip install whill
+```
+
 ## APIs
 
 ### Initialize
