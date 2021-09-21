@@ -25,6 +25,7 @@ Clone or download this repository at any place you want, or this package is aval
 ### Initialize
 
 ```python
+from whill import ComWHILL
 <your_obj_name> = ComWHILL(port=<Your COM Port>)
 ```
 Initialize WHILL instance with SoftwareSerial.
@@ -73,11 +74,11 @@ Enable/Disable power supply to the interface connector. `True` to enable power s
 
 ### Sensors and Status
 
-### Accelerometer *deprecated*
-Accelerometer API has been disabled since v0.2.0.
+### Accelerometer **(deprecated)**
+Accelerometer API has been disabled since v1.2.0.
 
-#### Gyro *deprecated*
-Gyro API has been disabled since v0.2.0.
+#### Gyro **(deprecated)**
+Gyro API has been disabled since v1.2.0.
 
 #### Battery
 ```python
