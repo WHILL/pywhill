@@ -1,23 +1,24 @@
 # pywhill
 pywhill is a WHILL Model CR SDK for Python. <br>
-We also have [a FAQ and developers community website](https://whill.zendesk.com/hc/ja) for current and potential Model CR users. <br>
-For general questions and requests, please visit https://whill.zendesk.com/hc/ja .
+We also have [Model CR Technical Support repository](https://github.com/WHILL/Model_CR_Technical_Support) for current and potential Model CR users. <br>
+For general questions and requests, please visit our [product page](https://whill.inc/jp/model-cr) .
 
 <img src="https://user-images.githubusercontent.com/2618822/45492944-89421c00-b7a8-11e8-9c92-22aa3f28f6e4.png" width=30%>
 
 
 ## Requirements
 - WHILL **Model CR**  (Normal **Model C** does not support serial communication.)
-- Python3.6 or later (Python2 SDK is currently under develpment)
+- Python3.6 or later
 - pySerial (https://github.com/pyserial/pyserial)
 
 ## OS Support
-- [x] Windows 10
-- [ ] MacOS X (Currently under migration. Any pull request is more than welcome)
-- [ ] Ubuntu 16.04 (Currently under migration. Any pull request is more than welcome)
+- Windows 10
+- MacOS X
+- Ubuntu 16.04
+- Ubuntu 18.04
 
 ## Getting Started
-Clone or download this repository at any place you want.
+Clone or download this repository at any place you want, or this package is avalable on [PyPI](https://pypi.org/project/whill/).
 
 ## APIs
 
@@ -72,18 +73,11 @@ Enable/Disable power supply to the interface connector. `True` to enable power s
 
 ### Sensors and Status
 
-### Accelerometer
-```python
-<your_obj_name>.accelerometer
-```
-Accelerometer mounted on body.
+### Accelerometer *deprecated*
+Accelerometer API has been disabled since v0.2.0.
 
-#### Gyro
-```python
-<your_obj_name>.gyro
-```
-Gyro sensor mounted on body.
-
+#### Gyro *deprecated*
+Gyro API has been disabled since v0.2.0.
 
 #### Battery
 ```python

@@ -22,8 +22,6 @@ def callback1():
     global request_speed_mode, whill
     print('callback 1')
     level, current = whill.battery.values()
-    print(whill.accelerometer)
-    print(whill.gyro)
     print(whill.joy)
     print('Battery Status: remaining capacity {level}%, current draiwng {current}mA'.format(level=level,
                                                                                             current=current))
