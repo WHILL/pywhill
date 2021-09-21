@@ -32,12 +32,8 @@ def parse_data_set_0(self, payload):
 
 
 def parse_data_set_1(self, payload):
-    self.accelerometer['x'] = int.from_bytes(payload[0:2], 'big', signed=True) * 0.122
-    self.accelerometer['y'] = int.from_bytes(payload[2:4], 'big', signed=True) * 0.122
-    self.accelerometer['z'] = int.from_bytes(payload[4:6], 'big', signed=True) * 0.122
-    self.gyro['x'] = int.from_bytes(payload[6:8], 'big', signed=True) * 4.375
-    self.gyro['y'] = int.from_bytes(payload[8:10], 'big', signed=True) * 4.375
-    self.gyro['z'] = int.from_bytes(payload[10:12], 'big', signed=True) * 4.375
+    # payload[0-11] are dedicated to IMU and no longer available.
+    # See https://github.com/WHILL/pywhill/issues/3 for more detail.
     self.joy['front'] = s8(payload[12])
     self.joy['side'] = s8(payload[13])
     self.battery['level'] = payload[14]

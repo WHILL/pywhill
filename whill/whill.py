@@ -8,8 +8,8 @@ import serial
 import threading
 import time
 from enum import IntEnum, auto
-from whill_data import Data3D, Joy, Battery, Motor, SpeedProfile
-from whill_packet import dispatch_payload
+from . import whill_data as wd
+from . import whill_packet as wp
 
 
 class ComWHILL():
@@ -52,8 +52,6 @@ class ComWHILL():
         Attributes
         ----------
         com (serial.Serial): Serial object for communicating to WHILL.
-        accelerometer (whill_data.Data3D): 3D Acceleration (x, y, z).
-        gyro (whill_data.Data3D): 3D gyro (x, y, z).
         virtual_joy (whill_data.Joy): Currently unused.
         joy (whill_data.Joy): Input value from WHILL's joystick controller.
         speed_profile (whill_data.SpeedProfile): Speed profile array for six settings.
@@ -61,14 +59,12 @@ class ComWHILL():
         left_motor (whill_data.Motor): Left motor status (angle, speed).
         """
         self.com = serial.Serial(port=port, baudrate=38400, timeout=timeout)
-        self.accelerometer = Data3D()
-        self.gyro = Data3D()
-        self.virtual_joy = Joy()
-        self.joy = Joy()
-        self.speed_profile = SpeedProfile()
-        self.right_motor = Motor()
-        self.left_motor = Motor()
-        self.battery = Battery()
+        self.virtual_joy = wd.Joy()
+        self.joy = wd.Joy()
+        self.speed_profile = wd.SpeedProfile()
+        self.right_motor = wd.Motor()
+        self.left_motor = wd.Motor()
+        self.battery = wd.Battery()
         self.power_status = False
         self.speed_mode_indicator = 0
         self.error_code = 0
@@ -100,12 +96,17 @@ class ComWHILL():
         while self.com.in_waiting > 0:
             data_length, payload = self.receive_data()
             if data_length > 0:
-                is_valid = self.validate_received_data(data_length, payload)
-                if is_valid:
-                    is_known_payload = dispatch_payload(self, payload)
-                    if is_known_payload:
+                if self.validate_received_data(data_length, payload):
+                    if wp.dispatch_payload(self, payload):
                         is_refreshed = True
         return is_refreshed
+
+    def sleep(self, secs, step_sec=0.01):
+        current_sec = 0
+        while current_sec < secs:
+            self.refresh()
+            time.sleep(step_sec)
+            current_sec += step_sec
 
     def receive_data(self):
         data_length = -1
@@ -163,15 +164,17 @@ class ComWHILL():
 
     def send_power_on(self):
         command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.ON]
+        self.send_command(command_bytes)
+        time.sleep(0.200)
         return self.send_command(command_bytes)
 
     def send_power_off(self):
         command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.OFF]
         return self.send_command(command_bytes)
 
-    def set_power(self, power_state_command):
-        command_bytes = [self.CommandID.SET_POWER, power_state_command]
-        return self.send_command(command_bytes)
+#    def set_power(self, power_state_command):
+#        command_bytes = [self.CommandID.SET_POWER, power_state_command]
+#        return self.send_command(command_bytes)
 
     def set_speed_profile(self, speed_mode,
                           forward_speed_max, forward_accel, forward_decel,
