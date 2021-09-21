@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "whill"
-version = "0.2.0"
+version = "1.2.0"
 description = "WHILL Model CR SDK for Python"
 authors = ["Seiya Shimizu <seiya.shimizu@whill.inc>"]
 license = "MIT"
