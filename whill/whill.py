@@ -21,6 +21,9 @@ class ComWHILL():
         SET_JOYSTICK = auto()
         SET_SPEED_PROFILE = auto()
         SET_BATTERY_VOLTAGE_OUT = auto()
+        RESERVE_1 = auto()
+        RESERVE_2 = auto()
+        SET_VELOCITY = auto()
 
     class UserControl(IntEnum):
         DISABLE = 0
@@ -36,6 +39,7 @@ class ComWHILL():
         CommandID.SET_JOYSTICK: 4,
         CommandID.SET_SPEED_PROFILE: 11,
         CommandID.SET_BATTERY_VOLTAGE_OUT: 2,
+        CommandID.SET_VELOCITY: 6,
     }
 
     __PROTOCOL_SIGN = 0xAF
@@ -147,6 +151,14 @@ class ComWHILL():
         command_bytes = [self.CommandID.SET_JOYSTICK, self.UserControl.DISABLE, front, side]
         return self.send_command(command_bytes)
 
+    def send_velocity(self, front=0, side=0):
+        front_up = (front & 0xFF00) >> 8
+        front_low = (front & 0x00FF)
+        side_up = (side & 0xFF00) >> 8
+        side_low = (side & 0x00FF)
+        command_bytes = [self.CommandID.SET_VELOCITY, self.UserControl.DISABLE, front_up, front_low, side_up, side_low]
+        return self.send_command(command_bytes)
+
     def send_stop(self):
         return self.send_joystick()
 
@@ -172,9 +184,11 @@ class ComWHILL():
         command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.OFF]
         return self.send_command(command_bytes)
 
-#    def set_power(self, power_state_command):
-#        command_bytes = [self.CommandID.SET_POWER, power_state_command]
-#        return self.send_command(command_bytes)
+    def set_power(self, power_state_command):
+        if power_state_command:
+            return self.send_power_on()
+        else:
+            return self.send_power_off()
 
     def set_speed_profile(self, speed_mode,
                           forward_speed_max, forward_accel, forward_decel,
