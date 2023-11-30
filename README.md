@@ -56,7 +56,7 @@ Command WHILL to stop report WHILL status.
 ### Manipulation
 
 ```python
-<your_obj_name>.set_joy_stick(front=<Integer -100~100>, side=<Integer -100~100>)
+<your_obj_name>.send_joystick(front=<Integer -100~100>, side=<Integer -100~100>)
 ```
 Manipulate a WHILL via this command.
 Both `front` and `side` are integer values with range -100 ~ 100.
@@ -66,7 +66,6 @@ Both `front` and `side` are integer values with range -100 ~ 100.
 <your_obj_name>.send_power_on()
 <your_obj_name>.send_power_off()
 <your_obj_name>.set_power(power_state_command=<True/False>)
-
 ```
 Turn on/off a WHILL. `power_state_command` is a bool with `True` to power WHILL on.
 
@@ -74,6 +73,15 @@ Turn on/off a WHILL. `power_state_command` is a bool with `True` to power WHILL 
 <your_obj_name>.set_battery_voltage_output_mode(vbatt_on_off=<True/False>)
 ```
 Enable/Disable power supply to the interface connector. `True` to enable power supply.
+
+```python
+<your_obj_name>.send_velocity(front=<Integer -500~1500>, side=<Integer -750~750>)
+```
+Control the speed of a WHILL directly via this command. (Available since v1.3.0)
+`front` is  integer values with range -500 ~ 1500 [0.004km/h].
+`side` is integer values with range -750 ~ 750 [0.004km/h].
+**Attention:**
+WHILL moves so quickly using SetVelocity command and so pay enough attention to use SetVelocity command. Basically, send this command to increase speed gradually.
 
 
 ### Sensors and Status
