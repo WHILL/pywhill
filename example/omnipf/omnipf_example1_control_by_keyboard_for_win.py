@@ -16,13 +16,25 @@ whill_B = ComWHILL(port='COM6')
 def move_forward(y=0):
     actual_y = int(15 * y)
     whill_A.send_velocity(actual_y, int(0))
-    whill_B.send_velocity(-actual_y, int(0))
+    whill_B.send_velocity(actual_y, int(0))
 
 # Move right (move left with negative input)
-def move_right(x=0):
-    actual_x = int(15 * x)
-    whill_A.send_velocity(int(0), actual_x)
-    whill_B.send_velocity(int(0), -actual_x)
+def move_right(y=0):
+    actual_y = int(15 * y)
+    whill_A.send_velocity(actual_y, int(0))
+    whill_B.send_velocity(-actual_y, int(0))
+
+# Move right forward (move left backward with negative input)
+def move_right_forward(y=0):
+    actual_y = int(15 * y)
+    whill_A.send_velocity(actual_y, int(0))
+    whill_B.send_velocity(int(0), int(0))
+
+# Move left forward (move right backward with negative input)
+def move_left_forward(y=0):
+    actual_y = int(15 * y)
+    whill_A.send_velocity(int(0), int(0))
+    whill_B.send_velocity(actual_y, int(0))
 
 # Turn right (turn left with negative input)
 def turn_right(x=0):
@@ -46,6 +58,10 @@ def main():
     print("[↓(Down)]  : Move backward")
     print("[←(Left)]  : Move left")
     print("[→(Right)] : Move right")
+    print("[N]        : ↗ Move right forward")
+    print("[E]        : ↘ Move right backward")
+    print("[S]        : ↙ Move left backward")
+    print("[W]        : ↖ Move left forward")
     print("[L]        : Turn left")
     print("[R]        : Turn right")
     print("[U]        : Up speed   +10%")
@@ -81,6 +97,18 @@ def main():
         elif key == 114:
             # r: Turn right
             turn_right(speed_value)
+        elif key == 110:
+            # n: Move right forward (North-east)
+            move_right_forward(speed_value)
+        elif key == 101:
+            # e: Move right backward (south-East)
+            move_left_forward(-speed_value)
+        elif key == 115:
+            # s: Move left backward (Sorth-west)
+            move_right_forward(-speed_value)
+        elif key == 119:
+            # w: Move left forward (north-West)
+            move_left_forward(speed_value)
 
         elif key == 224:
             pass
