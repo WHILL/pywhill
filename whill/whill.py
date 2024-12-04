@@ -21,7 +21,7 @@ class ComWHILL():
         SET_JOYSTICK = auto()
         SET_SPEED_PROFILE = auto()
         SET_BATTERY_VOLTAGE_OUT = auto()
-        RESERVE_1 = auto()
+        SET_BATTERY_SAVING = auto()
         RESERVE_2 = auto()
         SET_VELOCITY = auto()
 
@@ -39,6 +39,7 @@ class ComWHILL():
         CommandID.SET_JOYSTICK: 4,
         CommandID.SET_SPEED_PROFILE: 11,
         CommandID.SET_BATTERY_VOLTAGE_OUT: 2,
+        CommandID.SET_BATTERY_SAVING: 3,
         CommandID.SET_VELOCITY: 6,
     }
 
@@ -219,6 +220,10 @@ class ComWHILL():
 
     def set_battery_voltage_output_mode(self, vbatt_on_off):
         command_bytes = [self.CommandID.SET_BATTERY_VOLTAGE_OUT, vbatt_on_off]
+        return self.send_command(command_bytes)
+
+    def set_battery_saving(self, low_battery_level=19, sounds_buzzer=True):
+        command_bytes = [self.CommandID.SET_BATTERY_SAVING, low_battery_level, sounds_buzzer]
         return self.send_command(command_bytes)
 
     def hold_joy_core(self, front, side, timeout=1000):

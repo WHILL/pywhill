@@ -49,6 +49,14 @@ Turn on/off a WHILL. `power_state_command` is a bool with `True` to power WHILL 
 ```
 Enable/Disable power supply to the interface connector. `True` to enable power supply. **For Model CR only.**
 
+```python
+<your_obj_name>.set_battery_saving(low_battery_level=<Integer -100~100>, sounds_buzzer=<True/False>)
+```
+Configure battery protection settings. **For Model CR2 only.**
+`low_battery_level` is battery charge level to engage the standby mode with range 1 ~ 90.
+`sounds_buzzer` is Enable/Disable a buzzing sound at the battery charge level of `low_battery_level` + 10 percentage points. `True` to enable a buzzing sound when battery level low.
+As default, `low_battery_level` is 19 and `sounds_buzzer` is True.
+
 ### Motor Control
 ```python
 <your_obj_name>.send_joystick(front=<Integer -100~100>, side=<Integer -100~100>)
