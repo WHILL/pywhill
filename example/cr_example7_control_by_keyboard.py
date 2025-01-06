@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-# whill module example package for WINDOWS
-# Copyright (c) 2023 WHILL, Inc.
+# whill module example package
+# Copyright (c) 2025 WHILL, Inc.
 # This software is released under the MIT License.
 
 import time
-from msvcrt import getch
+from readchar import readkey, key
 from whill import ComWHILL
 
-whill = ComWHILL(port='COM6')
+whill = ComWHILL(port='COM3')
 control_type = 0  # 0: Joystick / 1: Velocity
 
 def drive_motor(y=0, x=0):
@@ -44,55 +44,46 @@ def main():
     print("[D]        : Down speed -10%")
     print("[J]        : Use SetJoystick command")
     print("[V]        : Use SetVelocity command")
-    print("[Ctrl]+[C] : Quit")
+    print("[Q]        : Quit")
     print("--------------------------------------")
 
     while True:
-        key = ord(getch())
-        if key == 3:
-            # Ctrl + C
+        k = readkey()
+        if k == 'q':
             print("Quit.")
             whill.set_power(False)
             return
-        elif key == 117:
-            # u
+        elif k == 'u':
             speed_value += 10
             if speed_value > 100:
                 speed_value = 100
             print(f"speed: {speed_value}[%]")
-        elif key == 100:
-            # d
+        elif k == 'd':
             speed_value -= 10
             if speed_value < 10:
                 speed_value = 10
             print(f"speed: {speed_value}[%]")
-        elif key == 106:
-            # j
+        elif k == 'j':
             control_type = 0
             print("Start 'SetJoystick' Command.")
-        elif key == 118:
-            # v
+        elif k == 'v':
             control_type = 1
             print("Start 'SetVelocity' Command.")
-
-        elif key == 224:
-            pass
-        elif key == 72:
+        elif k == key.UP:
             # Up
             drive_motor(speed_value, int(0))
-        elif key == 80:
+        elif k == key.DOWN:
             # Down
             drive_motor(-1 * speed_value, int(0))
-        elif key == 75:
+        elif k == key.LEFT:
             # Left
             drive_motor(int(0), -1 * speed_value)
-        elif key == 77:
+        elif k == key.RIGHT:
             # Right
             drive_motor(int(0), speed_value)
-
         else:
             # other: STOP
-            print(key)
+            print(k)
             drive_motor(int(0), int(0))
             continue
 
