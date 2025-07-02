@@ -70,6 +70,8 @@ class ComWHILL():
         self.right_motor = wd.Motor()
         self.left_motor = wd.Motor()
         self.battery = wd.Battery()
+        self.imu_accel = wd.Data3D()
+        self.imu_gyro = wd.Data3D()
         self.power_status = False
         self.speed_mode_indicator = 0
         self.error_code = 0
