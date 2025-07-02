@@ -31,48 +31,34 @@ def parse_data_set_0(self, payload):
     self.fire_callback('data_set_0')
 
 def parse_data_set_1(self, payload):
-    # IMU (Accelerometer + Gyro)
-    # Each axis is 16 bits (MSB + LSB), signed
     def to_signed_16(msb, lsb):
         val = (msb << 8) | lsb
         return val if val < 0x8000 else val - 0x10000
 
     self.imu = {}
-    self.imu['acc_x'] = to_signed_16(payload[0], payload[2])  # ACC_X (MSB, LSB)
-    self.imu['acc_y'] = to_signed_16(payload[4], payload[5])
-    self.imu['acc_z'] = to_signed_16(payload[6], payload[7])
-    self.imu['gyro_x'] = to_signed_16(payload[8], payload[9])
-    self.imu['gyro_y'] = to_signed_16(payload[10], payload[11])
-    self.imu['gyro_z'] = to_signed_16(payload[12], payload[13])
+    self.imu_acc['x'] = to_signed_16(payload[0], payload[1]) * 0.122  # [mg]
+    self.imu_acc['y'] = to_signed_16(payload[2], payload[3]) * 0.122  # [mg]
+    self.imu_acc['z'] = to_signed_16(payload[4], payload[5]) * 0.122  # [mg]
+    self.imu_gyro['x'] = to_signed_16(payload[6], payload[7]) * 4.375  # [mdps]
+    self.imu_gyro['y'] = to_signed_16(payload[8], payload[9]) * 4.375  # [mdps]
+    self.imu_gyro['z'] = to_signed_16(payload[10], payload[11]) * 4.375  # [mdps]
 
-    # Flags
-    self.low_battery_level = payload[1]
-    self.enable_buzzer = payload[3]
+    self.joy['front'] = s8(payload[12])
+    self.joy['side'] = s8(payload[13])
 
-    # Joystick
-    self.joy['front'] = s8(payload[14])
-    self.joy['side'] = s8(payload[15])
+    self.battery['level'] = payload[14]
+    self.battery['current'] = to_signed_16(payload[15], payload[16]) * 2.0  # [mA]
 
-    # Battery
-    self.battery['power'] = payload[16]
-    self.battery['current'] = int.from_bytes(payload[17:19], 'big', signed=True) * 2.0
+    self.right_motor['angle'] = - to_signed_16(payload[17], payload[18]) * 0.001  # [rad]
+    self.left_motor['angle'] = to_signed_16(payload[19], payload[20]) * 0.001
 
-    # Motors (angle in radians? check units, current code uses *0.001)
-    self.right_motor['angle'] = int.from_bytes(payload[19:21], 'big', signed=True) * 0.001
-    self.left_motor['angle'] = int.from_bytes(payload[21:23], 'big', signed=True) * 0.001
+    self.right_motor['speed'] = - to_signed_16(payload[21], payload[22]) * 0.004  # [km/h]
+    self.left_motor['speed'] = to_signed_16(payload[23], payload[24]) * 0.004
 
-    # Motors speed (unit scale from your previous code: *0.004)
-    self.right_motor['speed'] = int.from_bytes(payload[23:25], 'big', signed=True) * 0.004
-    self.left_motor['speed'] = int.from_bytes(payload[25:27], 'big', signed=True) * 0.004
-
-    # Status
-    self.power_status = payload[27]
-    self.speed_mode_indicator = payload[28]
-    self.error_code = payload[29]
-
-    self.timestamp_past = self.timestamp_current
-    self.timestamp_current = payload[30]
-    self.time_diff_ms = calc_time_diff(self.timestamp_past, self.timestamp_current)
+    self.power_status = payload[25]
+    self.speed_mode_indicator = payload[26]
+    self.error_code = payload[27]
+    self.angle_detect_counter = payload[28]
 
     self.seq_data_set_1 += 1
     self.fire_callback('data_set_1')

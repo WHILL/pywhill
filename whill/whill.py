@@ -70,7 +70,7 @@ class ComWHILL():
         self.right_motor = wd.Motor()
         self.left_motor = wd.Motor()
         self.battery = wd.Battery()
-        self.imu_accel = wd.Data3D()
+        self.imu_acc = wd.Data3D()
         self.imu_gyro = wd.Data3D()
         self.power_status = False
         self.speed_mode_indicator = 0
@@ -151,10 +151,17 @@ class ComWHILL():
         return self.com.write(bytes(command_bytes))
 
     def send_joystick(self, front=0, side=0):
+        front = max(-100, min(100, front))
+        side = max(-100, min(100, side))
         command_bytes = [self.CommandID.SET_JOYSTICK, self.UserControl.DISABLE, front, side]
         return self.send_command(command_bytes)
 
+
     def send_velocity(self, front=0, side=0):
+        # Clamp according to spec ranges
+        front = max(-500, min(1500, front))
+        side = max(-750, min(750, side))
+
         front_up = (front & 0xFF00) >> 8
         front_low = (front & 0x00FF)
         side_up = (side & 0xFF00) >> 8
