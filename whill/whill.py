@@ -95,6 +95,10 @@ class ComWHILL():
         self.__velocity_thread.daemon = True
         self.__velocity_thread_stop = threading.Event()
 
+    @property
+    def get_joystick_disabled(self) -> bool:
+        return self.__velocity_watchdog_enabled
+
     def update_velocity(self, front, side):
         """Call this method when a new /cmd/vel message is received."""
         self.__last_velocity_cmd_time = time.time()
@@ -113,6 +117,7 @@ class ComWHILL():
         elif not enabled:
             self.__velocity_thread_stop.set()
 
+
     def __velocity_watchdog_loop(self):
         while not self.__velocity_thread_stop.is_set():
             now = time.time()
@@ -120,7 +125,7 @@ class ComWHILL():
             if time_since_last_cmd > self.__VELOCITY_TIMEOUT_SEC:
                 self.send_velocity(0, 0)
                 self.__last_velocity_cmd_time = now  # prevent spamming
-            time.sleep(0.1)  # check every 100ms
+            time.sleep(0.05)  # check every 50ms
 
 
     def register_callback(self, event, func=None):
