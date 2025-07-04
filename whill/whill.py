@@ -86,6 +86,42 @@ class ComWHILL():
         self.__TIMEOUT_MAX = 60000 # 60 seconds
         self.thread = threading.Thread(target=self.hold_joy_core, kwargs={'front': 0, 'side': 0, 'timeout': 1000})
         self.__stop_event = threading.Event()
+        self.__velocity_watchdog_enabled = True
+        self.__last_velocity_cmd_time = 0
+        self.__VELOCITY_TIMEOUT_SEC = 0.1
+        self.__last_velocity_front = 0
+        self.__last_velocity_side = 0
+        self.__velocity_thread = threading.Thread(target=self.__velocity_watchdog_loop)
+        self.__velocity_thread.daemon = True
+        self.__velocity_thread_stop = threading.Event()
+
+    def update_velocity(self, front, side):
+        """Call this method when a new /cmd/vel message is received."""
+        self.__last_velocity_cmd_time = time.time()
+        self.__last_velocity_front = front
+        self.__last_velocity_side = side
+        self.send_velocity(front, side)
+
+    def enable_velocity_watchdog(self, enabled: bool):
+        """Enable or disable the velocity watchdog."""
+        self.__velocity_watchdog_enabled = enabled
+        if enabled and not self.__velocity_thread.is_alive():
+            self.__velocity_thread_stop.clear()
+            self.__velocity_thread = threading.Thread(target=self.__velocity_watchdog_loop)
+            self.__velocity_thread.daemon = True
+            self.__velocity_thread.start()
+        elif not enabled:
+            self.__velocity_thread_stop.set()
+
+    def __velocity_watchdog_loop(self):
+        while not self.__velocity_thread_stop.is_set():
+            now = time.time()
+            time_since_last_cmd = now - self.__last_velocity_cmd_time
+            if time_since_last_cmd > self.__VELOCITY_TIMEOUT_SEC:
+                self.send_velocity(0, 0)
+                self.__last_velocity_cmd_time = now  # prevent spamming
+            time.sleep(0.1)  # check every 100ms
+
 
     def register_callback(self, event, func=None):
         ret = False
