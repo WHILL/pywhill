@@ -86,7 +86,7 @@ class ComWHILL():
         self.__TIMEOUT_MAX = 60000 # 60 seconds
         self.thread = threading.Thread(target=self.hold_joy_core, kwargs={'front': 0, 'side': 0, 'timeout': 1000})
         self.__stop_event = threading.Event()
-        self.__velocity_watchdog_enabled = True
+        self.__velocity_watchdog_enabled = False
         self.__last_velocity_cmd_time = 0
         self.__VELOCITY_TIMEOUT_SEC = 0.1
         self.__last_velocity_front = 0
