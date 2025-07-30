@@ -13,6 +13,24 @@ from . import whill_packet as wp
 
 
 class ComWHILL():
+    """
+    WHILL mobility device control interface.
+    
+    This class provides methods to communicate with and control WHILL mobility devices
+    through serial communication. It supports joystick control, velocity control,
+    power management, speed profile configuration, and battery monitoring.
+    
+    Attributes:
+        com (serial.Serial): Serial communication object for WHILL device.
+        joy (whill_data.Joy): Current joystick input values from WHILL controller.
+        speed_profile (whill_data.SpeedProfile): Speed profile settings for different modes.
+        right_motor (whill_data.Motor): Right motor status (angle, speed).
+        left_motor (whill_data.Motor): Left motor status (angle, speed).
+        battery (whill_data.Battery): Battery status information.
+        power_status (int): Current power status of the device.
+        speed_mode_indicator (int): Current speed mode indicator.
+        error_code (int): Error code from the device.
+    """
 
     class CommandID(IntEnum):
         START = 0
@@ -87,6 +105,16 @@ class ComWHILL():
         self.__hold_control_type = None  # 'joy' or 'velocity'
 
     def register_callback(self, event, func=None):
+        """
+        Register a callback function for specific events.
+        
+        Parameters:
+            event (str): Event type ('data_set_0', 'data_set_1', 'power_on')
+            func (callable): Callback function to register
+            
+        Returns:
+            bool: True if registration successful, False otherwise
+        """
         ret = False
         if event in self.__callback_dict:
             self.__callback_dict[event] = func
@@ -98,6 +126,15 @@ class ComWHILL():
             return self.__callback_dict[event]()
 
     def refresh(self):
+        """
+        Refresh device data by reading and processing incoming serial data.
+        
+        Reads all available data from the serial port, validates it, and updates
+        internal state variables including joystick, motor, and battery data.
+        
+        Returns:
+            bool: True if new data was received and processed, False otherwise
+        """
         is_refreshed = False
         self.power_status = 0
         self.error_code = 0
@@ -110,6 +147,16 @@ class ComWHILL():
         return is_refreshed
 
     def sleep(self, secs, step_sec=0.01):
+        """
+        Sleep for specified duration while continuously refreshing device data.
+        
+        This method is useful for maintaining communication with the device
+        during idle periods.
+        
+        Parameters:
+            secs (float): Total sleep duration in seconds
+            step_sec (float): Interval between refresh calls in seconds
+        """
         current_sec = 0
         while current_sec < secs:
             self.refresh()
@@ -152,10 +199,37 @@ class ComWHILL():
         return self.com.write(bytes(command_bytes))
 
     def send_joystick(self, front=0, side=0):
+        """
+        Send joystick control command to the WHILL device.
+        
+        Controls the mobility device movement using joystick-style input.
+        Positive front values move forward, negative move backward.
+        Positive side values turn right, negative turn left.
+        
+        Parameters:
+            front (int): Forward/backward joystick value (-100 to 100)
+            side (int): Left/right joystick value (-100 to 100)
+            
+        Returns:
+            int: Number of bytes written to serial port
+        """
         command_bytes = [self.CommandID.SET_JOYSTICK, self.UserControl.DISABLE, front, side]
         return self.send_command(command_bytes)
 
     def send_velocity(self, front=0, side=0):
+        """
+        Send velocity control command to the WHILL device.
+        
+        Controls the mobility device movement using direct velocity commands.
+        This provides more precise control than joystick commands.
+        
+        Parameters:
+            front (int): Forward/backward velocity value (-500 to 1500)
+            side (int): Left/right velocity value (-750 to 750)
+            
+        Returns:
+            int: Number of bytes written to serial port
+        """
         front_up = (front & 0xFF00) >> 8
         front_low = (front & 0x00FF)
         side_up = (side & 0xFF00) >> 8
@@ -171,24 +245,77 @@ class ComWHILL():
         return self.send_command(command_bytes)
 
     def start_data_stream(self, interval_msec, data_set_number=1, speed_mode=5):
+        """
+        Start continuous data streaming from the WHILL device.
+        
+        Begins receiving periodic status updates including joystick, motor,
+        and battery data at the specified interval.
+        
+        Parameters:
+            interval_msec (int): Data update interval in milliseconds (10-65535)
+            data_set_number (int): Data set number (0 or 1)
+            speed_mode (int): Speed mode setting (0-5) only data_set_number=0 is valid
+                - 0-3: speed modes for joystick control
+                - 4: speed mode for serial control
+                - 5: speed mode for smart-phone app control
+            
+        Returns:
+            int: Number of bytes written to serial port
+        """
         command_bytes = [self.CommandID.START, data_set_number, interval_msec >> 8, interval_msec & 0xFF, speed_mode]
         return self.send_command(command_bytes)
 
     def stop_data_stream(self):
+        """
+        Stop continuous data streaming from the WHILL device.
+        
+        Halts the periodic status updates started by start_data_stream().
+        
+        Returns:
+            int: Number of bytes written to serial port
+        """
         command_bytes = [self.CommandID.STOP]
         return self.send_command(command_bytes)
 
     def send_power_on(self):
+        """
+        Send power on command to the WHILL device.
+        
+        Powers on the mobility device control system. Sends the command twice
+        with a 200ms delay to ensure reliable activation.
+        
+        Returns:
+            int: Number of bytes written to serial port
+        """
         command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.ON]
         self.send_command(command_bytes)
         time.sleep(0.200)
         return self.send_command(command_bytes)
 
     def send_power_off(self):
+        """
+        Send power off command to the WHILL device.
+        
+        Powers off the mobility device control system.
+        
+        Returns:
+            int: Number of bytes written to serial port
+        """
         command_bytes = [self.CommandID.SET_POWER, self.PowerCommand.OFF]
         return self.send_command(command_bytes)
 
     def set_power(self, power_state_command):
+        """
+        Set power state of the WHILL device.
+        
+        Convenience method to power on or off the device based on boolean input.
+        
+        Parameters:
+            power_state_command (bool): True to power on, False to power off
+            
+        Returns:
+            int: Number of bytes written to serial port
+        """
         if power_state_command:
             return self.send_power_on()
         else:
@@ -198,6 +325,30 @@ class ComWHILL():
                           forward_speed_max, forward_accel, forward_decel,
                           reverse_speed_max, reverse_accel, reverse_decel,
                           turn_speed_max,    turn_accel,    turn_decel):
+        """
+        Set speed profile parameters for a specific speed mode.
+        
+        Configures acceleration, deceleration, and maximum speed settings
+        for forward, reverse, and turning movements.
+        
+        Parameters:
+            speed_mode (int): Speed mode to configure (0-5)
+                - 0-3: speed modes for joystick control
+                - 4: speed mode for serial control
+                - 5: speed mode for smart-phone app control
+            forward_speed_max (int): Maximum forward speed (8-60)
+            forward_accel (int): Forward acceleration rate (10-64)
+            forward_decel (int): Forward deceleration rate (40-160)
+            reverse_speed_max (int): Maximum reverse speed (8-30)
+            reverse_accel (int): Reverse acceleration rate (10-50)
+            reverse_decel (int): Reverse deceleration rate (40-80)
+            turn_speed_max (int): Maximum turning speed (8-35)
+            turn_accel (int): Turning acceleration rate (10-60)
+            turn_decel (int): Turning deceleration rate (40-160)
+            
+        Returns:
+            int: Number of bytes written to serial port
+        """
         command_bytes = [self.CommandID.SET_SPEED_PROFILE,
                          speed_mode,
                          forward_speed_max, forward_accel, forward_decel,
@@ -206,6 +357,31 @@ class ComWHILL():
         return self.send_command(command_bytes)
 
     def set_speed_profile_via_dict(self, speed_mode, profile):
+        """
+        Set speed profile using a dictionary of parameters.
+        
+        Convenience method to set speed profile using a dictionary format
+        instead of individual parameters.
+        
+        Parameters:
+            speed_mode (int): Speed mode to configure (0-5)
+                - 0-3: speed modes for joystick control
+                - 4: speed mode for serial control
+                - 5: speed mode for smart-phone app control
+            profile (dict): Dictionary containing speed profile parameters:
+                - forward_speed: Maximum forward speed (8-60)
+                - forward_acceleration: Forward acceleration rate (10-64)
+                - forward_deceleration: Forward deceleration rate (40-160)
+                - reverse_speed: Maximum reverse speed (8-30)
+                - reverse_acceleration: Reverse acceleration rate (10-50)
+                - reverse_deceleration: Reverse deceleration rate (40-80)
+                - turn_speed: Maximum turning speed (8-35)
+                - turn_acceleration: Turning acceleration rate (10-60)
+                - turn_deceleration: Turning deceleration rate (40-160)
+                
+        Returns:
+            bool: True if speed_mode is valid and command sent, False otherwise
+        """
         ret = False
         if speed_mode in range(0, 6):
             self.set_speed_profile(speed_mode,
@@ -222,10 +398,33 @@ class ComWHILL():
         return ret
 
     def set_battery_voltage_output_mode(self, vbatt_on_off):
+        """
+        Set battery voltage output mode.
+        
+        Enables or disables battery voltage output for monitoring purposes.
+        
+        Parameters:
+            vbatt_on_off (int): 1 to enable, 0 to disable battery voltage output
+            
+        Returns:
+            int: Number of bytes written to serial port
+        """
         command_bytes = [self.CommandID.SET_BATTERY_VOLTAGE_OUT, vbatt_on_off]
         return self.send_command(command_bytes)
 
     def set_battery_saving(self, low_battery_level=19, sounds_buzzer=True):
+        """
+        Configure battery saving mode settings.
+        
+        Sets the low battery threshold and buzzer behavior for battery saving mode.
+        
+        Parameters:
+            low_battery_level (int): Battery level threshold for saving mode (1-90)
+            sounds_buzzer (bool): Whether to sound buzzer when battery is low
+            
+        Returns:
+            int: Number of bytes written to serial port
+        """
         command_bytes = [self.CommandID.SET_BATTERY_SAVING, low_battery_level, sounds_buzzer]
         return self.send_command(command_bytes)
 
@@ -248,6 +447,11 @@ class ComWHILL():
             self.__hold_control_type = None
 
     def unhold(self):
+        """
+        Stop any ongoing hold operation.
+        
+        Signals the hold thread to stop and clears the stop event.
+        """
         self.__stop_event.set()
 
     def unhold_joy(self):
@@ -257,6 +461,17 @@ class ComWHILL():
         self.unhold()
 
     def hold_joy(self, front, side, timeout=1000):
+        """
+        Hold joystick control values for a specified duration.
+        
+        Continuously sends the specified joystick values until timeout is reached
+        or unhold() is called. This method runs in a separate thread.
+        
+        Parameters:
+            front (int): Forward/backward joystick value (-100 to 100)
+            side (int): Left/right joystick value (-100 to 100)
+            timeout (int): Hold duration in milliseconds (max 60000)
+        """
         if self.thread and self.thread.is_alive():
             self.unhold()
             self.thread.join()
@@ -270,6 +485,17 @@ class ComWHILL():
         self.thread.start()
 
     def hold_velocity(self, front, side, timeout=1000):
+        """
+        Hold velocity control values for a specified duration.
+        
+        Continuously sends the specified velocity values until timeout is reached
+        or unhold() is called. This method runs in a separate thread.
+        
+        Parameters:
+            front (int): Forward/backward velocity value (-500 to 1500)
+            side (int): Left/right velocity value (-750 to 750)
+            timeout (int): Hold duration in milliseconds (max 60000)
+        """
         if self.thread and self.thread.is_alive():
             self.unhold()
             self.thread.join()
