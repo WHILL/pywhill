@@ -70,7 +70,7 @@ class ComWHILL():
         self.right_motor = wd.Motor()
         self.left_motor = wd.Motor()
         self.battery = wd.Battery()
-        self.power_status = False
+        self.power_status = 0
         self.speed_mode_indicator = 0
         self.error_code = 0
         self.timestamp_past = 0
@@ -99,6 +99,8 @@ class ComWHILL():
 
     def refresh(self):
         is_refreshed = False
+        self.power_status = 0
+        self.error_code = 0
         while self.com.in_waiting > 0:
             data_length, payload = self.receive_data()
             if data_length > 0:
