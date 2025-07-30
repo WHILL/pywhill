@@ -82,8 +82,9 @@ class ComWHILL():
         self.__callback_dict = {'data_set_0': None, 'data_set_1': None, 'power_on': None}
         self.__timeout_count = 0
         self.__TIMEOUT_MAX = 60000 # 60 seconds
-        self.thread = threading.Thread(target=self.hold_joy_core, kwargs={'front': 0, 'side': 0, 'timeout': 1000})
+        self.thread = None
         self.__stop_event = threading.Event()
+        self.__hold_control_type = None  # 'joy' or 'velocity'
 
     def register_callback(self, event, func=None):
         ret = False
@@ -226,29 +227,55 @@ class ComWHILL():
         command_bytes = [self.CommandID.SET_BATTERY_SAVING, low_battery_level, sounds_buzzer]
         return self.send_command(command_bytes)
 
-    def hold_joy_core(self, front, side, timeout=1000):
+    def hold_core(self, control_type, front, side, timeout=1000):
         while self.__timeout_count < timeout:
             if self.__stop_event.is_set():
                 self.__timeout_count = self.__TIMEOUT_MAX + 1
                 self.__stop_event.clear()
             self.__timeout_count += 100  # millisecond
             # print(self.__timeout_count)
-            self.send_joystick(front=front, side=side)
+            
+            if control_type == 'joy':
+                self.send_joystick(front=front, side=side)
+            elif control_type == 'velocity':
+                self.send_velocity(front=front, side=side)
+            
             time.sleep(0.10)
         else:
             self.__timeout_count = 0
+            self.__hold_control_type = None
 
-    def unhold_joy(self):
+    def unhold(self):
         self.__stop_event.set()
 
+    def unhold_joy(self):
+        self.unhold()
+
+    def unhold_velocity(self):
+        self.unhold()
+
     def hold_joy(self, front, side, timeout=1000):
-        if self.thread.is_alive():
-            self.unhold_joy()
+        if self.thread and self.thread.is_alive():
+            self.unhold()
             self.thread.join()
         self.__stop_event.clear()
         if timeout > self.__TIMEOUT_MAX:
             print('Timeout must be equal to or less than {timeout_max}'.format(timeout_max=self.__TIMEOUT_MAX))
             timeout = self.__TIMEOUT_MAX
         self.__timeout_count = 0
-        self.thread = threading.Thread(target=self.hold_joy_core, kwargs={'front': front, 'side': side, 'timeout': timeout})
+        self.__hold_control_type = 'joy'
+        self.thread = threading.Thread(target=self.hold_core, kwargs={'control_type': 'joy', 'front': front, 'side': side, 'timeout': timeout})
+        self.thread.start()
+
+    def hold_velocity(self, front, side, timeout=1000):
+        if self.thread and self.thread.is_alive():
+            self.unhold()
+            self.thread.join()
+        self.__stop_event.clear()
+        if timeout > self.__TIMEOUT_MAX:
+            print('Timeout must be equal to or less than {timeout_max}'.format(timeout_max=self.__TIMEOUT_MAX))
+            timeout = self.__TIMEOUT_MAX
+        self.__timeout_count = 0
+        self.__hold_control_type = 'velocity'
+        self.thread = threading.Thread(target=self.hold_core, kwargs={'control_type': 'velocity', 'front': front, 'side': side, 'timeout': timeout})
         self.thread.start()
