@@ -1,0 +1,13 @@
+# WHILL API Server Dependencies
+
+# Core WHILL library
+pywhill>=1.5.0
+
+# Web framework
+Flask>=2.0.0
+
+# API documentation
+flasgger>=0.9.5
+
+# Production WSGI server
+waitress>=2.1.0

@@ -1,0 +1,8 @@
+# WHILL API Server Development Dependencies
+
+# Include main application dependencies
+-r requirements.txt
+
+# Development tools for Swagger documentation generation
+requests>=2.25.0
+pyyaml>=5.0
