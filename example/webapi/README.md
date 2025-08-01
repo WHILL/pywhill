@@ -4,49 +4,53 @@
   - [1.1. API バージョン](#11-api-バージョン)
   - [1.2. ベースURL](#12-ベースurl)
   - [1.3. 認証](#13-認証)
-- [2. 共通仕様](#2-共通仕様)
-  - [2.1. リクエスト形式](#21-リクエスト形式)
-  - [2.2. レスポンス形式](#22-レスポンス形式)
-    - [2.2.1. 成功レスポンス](#221-成功レスポンス)
-    - [2.2.2. エラーレスポンス](#222-エラーレスポンス)
-  - [2.3. HTTPステータスコード](#23-httpステータスコード)
-  - [2.4. データ型](#24-データ型)
-- [3. エンドポイント仕様](#3-エンドポイント仕様)
-  - [3.1. 電源制御](#31-電源制御)
-    - [3.1.1. 電源制御](#311-電源制御)
-  - [3.2. モーション制御](#32-モーション制御)
-    - [3.2.1. ジョイスティック制御](#321-ジョイスティック制御)
-    - [3.2.2. 速度制御](#322-速度制御)
-    - [3.2.3. 制御解除](#323-制御解除)
-  - [3.3. データストリーミング](#33-データストリーミング)
-    - [3.3.1. データストリーム開始](#331-データストリーム開始)
-    - [3.3.2. データストリーム停止](#332-データストリーム停止)
-  - [3.4. ステータス監視](#34-ステータス監視)
-    - [3.4.1. ステータス取得](#341-ステータス取得)
-    - [3.4.2. バッテリー情報取得](#342-バッテリー情報取得)
-    - [3.4.3. モーター情報取得](#343-モーター情報取得)
-  - [3.5. 設定](#35-設定)
-    - [3.5.1. スピードプロファイル設定](#351-スピードプロファイル設定)
-    - [3.5.2. スピードプロファイル取得](#352-スピードプロファイル取得)
-    - [3.5.3. バッテリー節約設定](#353-バッテリー節約設定)
-  - [3.6. 診断](#36-診断)
-    - [3.6.1. 接続テスト](#361-接続テスト)
-- [4. エラーコード詳細](#4-エラーコード詳細)
-  - [4.1. 400 Bad Request](#41-400-bad-request)
-  - [4.2. 500 Internal Server Error](#42-500-internal-server-error)
-- [5. 使用例](#5-使用例)
-  - [5.1. curl を使用した基本的な操作](#51-curl-を使用した基本的な操作)
-    - [5.1.1. 電源ON](#511-電源on)
-    - [5.1.2. データストリーミング開始](#512-データストリーミング開始)
-    - [5.1.3. 前進（2秒間持続）](#513-前進2秒間持続)
-    - [5.1.4. 状態取得](#514-状態取得)
-    - [5.1.5. 制御解除](#515-制御解除)
-    - [5.1.6. 電源OFF](#516-電源off)
-- [6. 依存ライブラリのライセンス](#6-依存ライブラリのライセンス)
-  - [6.1. メインアプリケーション依存関係](#61-メインアプリケーション依存関係)
-  - [6.2. 開発ツール依存関係](#62-開発ツール依存関係)
-- [7. ライセンス](#7-ライセンス)
-- [8. 免責事項](#8-免責事項)
+- [2. セットアップ](#2-セットアップ)
+  - [2.1. 環境変数の設定](#21-環境変数の設定)
+  - [2.2. 環境変数の詳細](#22-環境変数の詳細)
+- [3. 共通仕様](#3-共通仕様)
+  - [3.1. リクエスト形式](#31-リクエスト形式)
+  - [3.2. レスポンス形式](#32-レスポンス形式)
+    - [3.2.1. 成功レスポンス](#321-成功レスポンス)
+    - [3.2.2. エラーレスポンス](#322-エラーレスポンス)
+  - [3.3. HTTPステータスコード](#33-httpステータスコード)
+  - [3.4. データ型](#34-データ型)
+- [4. エンドポイント仕様](#4-エンドポイント仕様)
+  - [4.1. 電源制御](#41-電源制御)
+    - [4.1.1. 電源制御](#411-電源制御)
+  - [4.2. モーション制御](#42-モーション制御)
+    - [4.2.1. ジョイスティック制御](#421-ジョイスティック制御)
+    - [4.2.2. 速度制御](#422-速度制御)
+    - [4.2.3. 制御解除](#423-制御解除)
+  - [4.3. データストリーミング](#43-データストリーミング)
+    - [4.3.1. データストリーム開始](#431-データストリーム開始)
+    - [4.3.2. データストリーム停止](#432-データストリーム停止)
+  - [4.4. ステータス監視](#44-ステータス監視)
+    - [4.4.1. ステータス取得](#441-ステータス取得)
+    - [4.4.2. バッテリー情報取得](#442-バッテリー情報取得)
+    - [4.4.3. モーター情報取得](#443-モーター情報取得)
+  - [4.5. 設定](#45-設定)
+    - [4.5.1. スピードプロファイル設定](#451-スピードプロファイル設定)
+    - [4.5.2. スピードプロファイル取得](#452-スピードプロファイル取得)
+    - [4.5.3. バッテリー節約設定](#453-バッテリー節約設定)
+  - [4.6. 診断](#46-診断)
+    - [4.6.1. 接続テスト](#461-接続テスト)
+- [5. エラーコード詳細](#5-エラーコード詳細)
+  - [5.1. 400 Bad Request](#51-400-bad-request)
+  - [5.2. 500 Internal Server Error](#52-500-internal-server-error)
+- [6. 使用例](#6-使用例)
+  - [6.1. 基本的な操作](#61-基本的な操作)
+  - [6.2. curl を使用した基本的な操作](#62-curl-を使用した基本的な操作)
+    - [6.2.1. 電源ON](#621-電源on)
+    - [6.2.2. データストリーミング開始](#622-データストリーミング開始)
+    - [6.2.3. 前進（2秒間持続）](#623-前進2秒間持続)
+    - [6.2.4. 状態取得](#624-状態取得)
+    - [6.2.5. 制御解除](#625-制御解除)
+    - [6.2.6. 電源OFF](#626-電源off)
+- [7. 依存ライブラリのライセンス](#7-依存ライブラリのライセンス)
+  - [7.1. メインアプリケーション依存関係](#71-メインアプリケーション依存関係)
+  - [7.2. 開発ツール依存関係](#72-開発ツール依存関係)
+- [8. ライセンス](#8-ライセンス)
+- [9. 免責事項](#9-免責事項)
 
 ---
 
@@ -72,30 +76,85 @@ http://localhost:5000
 ### 1.3. 認証
 認証機能は実装されていません。必要に応じて適切な認証機能を実装してください。
 
-## 2. 共通仕様
+---
 
-### 2.1. リクエスト形式
+## 2. セットアップ
+
+### 2.1. 環境変数の設定
+
+1. 必要なライブラリをインストール：
+```bash
+pip install -r requirements.txt
+```
+
+2. WHILLデバイスをUSBで接続
+
+3. 環境変数の設定（オプション）：
+```bash
+# Windows (PowerShell)
+$env:WHILL_PORT="COM3"
+$env:WHILL_HOST="0.0.0.0"
+$env:WHILL_PORT_NUMBER="5000"
+
+# Windows (Command Prompt)
+set WHILL_PORT=COM3
+set WHILL_HOST=0.0.0.0
+set WHILL_PORT_NUMBER=5000
+
+# Linux/macOS
+export WHILL_PORT="/dev/ttyUSB0"
+export WHILL_HOST="0.0.0.0"
+export WHILL_PORT_NUMBER="5000"
+```
+
+4. WebAPIサーバーを起動：
+```bash
+python app.py
+```
+
+5. ブラウザでの確認（オプション）：
+- Swagger UI: `http://localhost:5000/apidocs/`
+
+### 2.2. 環境変数の詳細
+
+| 環境変数名 | デフォルト値 | 説明 |
+|-----------|-------------|------|
+| `WHILL_PORT` | `COM3` (Windows) / `/dev/ttyUSB0` (Linux/macOS) | WHILLデバイスのシリアルポート |
+| `WHILL_HOST` | `127.0.0.1` | WebAPIサーバーのホストアドレス |
+| `WHILL_PORT_NUMBER` | `5000` | WebAPIサーバーのポート番号 |
+
+**注意事項:**
+- シリアルポート名は接続されているデバイスによって異なります
+- Windowsでは通常 `COM1`, `COM2`, `COM3` など
+- Linux/macOSでは通常 `/dev/ttyUSB0`, `/dev/ttyACM0` など
+- デバイスマネージャー（Windows）または `ls /dev/tty*`（Linux/macOS）で確認できます
+
+---
+
+## 3. 共通仕様
+
+### 3.1. リクエスト形式
 
 | 項目 | 値 |
 |------|-----|
 | **Content-Type** | `application/json` |
 | **文字コード** | UTF-8 |
 
-### 2.2. レスポンス形式
+### 3.2. レスポンス形式
 
-#### 2.2.1. 成功レスポンス
+#### 3.2.1. 成功レスポンス
 ```json
 {
   "success": true,
   "message": "成功メッセージ",
   "data": {
-    // エンドポイント固有のデータ
+    "エンドポイント固有のデータ"
   },
   "timestamp": "2025-01-15T10:30:00.000Z"
 }
 ```
 
-#### 2.2.2. エラーレスポンス
+#### 3.2.2. エラーレスポンス
 ```json
 {
   "success": false,
@@ -104,19 +163,19 @@ http://localhost:5000
 }
 ```
 
-### 2.3. HTTPステータスコード
+### 3.3. HTTPステータスコード
 - `200 OK`: 成功
 - `400 Bad Request`: パラメータエラー
 - `500 Internal Server Error`: サーバーエラー
 
-### 2.4. データ型
+### 3.4. データ型
 - **boolean**: `true` または `false`
 - **integer**: 整数値
 - **number**: 数値（整数または小数）
 
 ---
 
-## 3. エンドポイント仕様
+## 4. エンドポイント仕様
 
 **エンドポイント一覧**
 
@@ -138,20 +197,32 @@ http://localhost:5000
 
 ---
 
-### 3.1. 電源制御
+### 4.1. 電源制御
 
-#### 3.1.1. 電源制御
+#### 4.1.1. 電源制御
 WHILLの電源をON/OFFします。
 
 - **エンドポイント**: `POST /api/v1/whill/power`
 - **説明**: WHILL電源の制御
 
 **リクエストパラメータ:**
+
+**JSON Schema:**
 ```json
 {
-  "power_on": boolean  // 必須: true=電源ON, false=電源OFF
+  "type": "object",
+  "required": ["power_on"],
+  "properties": {
+    "power_on": {
+      "type": "boolean",
+      "description": "true=電源ON, false=電源OFF"
+    }
+  }
 }
 ```
+
+**パラメータ詳細:**
+- `power_on`: 必須。true=電源ON, false=電源OFF
 
 **レスポンス例:**
 ```json
@@ -176,28 +247,48 @@ WHILLの電源をON/OFFします。
 
 ---
 
-### 3.2. モーション制御
+### 4.2. モーション制御
 **※注意** 以下のジョイスティック制御および速度制御の"シングルショット"を使用してWHILLを連続動作させる場合には、200ms以内に後続の制御コマンドを送信する必要があります。
 
-#### 3.2.1. ジョイスティック制御
+#### 4.2.1. ジョイスティック制御
 ジョイスティック値による移動制御を行います。
 
 - **エンドポイント**: `POST /api/v1/whill/motion/joystick`
 - **説明**: ジョイスティック制御（シングルショットまたは持続制御）
 
 **リクエストパラメータ:**
+
+**JSON Schema:**
 ```json
 {
-  "front": number,   // 必須: 前後方向制御値 (-100 〜 100)
-  "side": number,    // 必須: 左右方向制御値 (-100 〜 100)
-  "timeout": number  // オプション: 持続時間(ms)、0または未指定でシングルショット
+  "type": "object",
+  "required": ["front", "side"],
+  "properties": {
+    "front": {
+      "type": "number",
+      "minimum": -100,
+      "maximum": 100,
+      "description": "前後方向制御値。正の値で前進、負の値で後退"
+    },
+    "side": {
+      "type": "number",
+      "minimum": -100,
+      "maximum": 100,
+      "description": "左右方向制御値。正の値で右旋回、負の値で左旋回"
+    },
+    "timeout": {
+      "type": "number",
+      "minimum": 0,
+      "description": "持続時間(ms)。0または未指定でシングルショット制御"
+    }
+  }
 }
 ```
 
 **パラメータ詳細:**
-- `front`: 正の値で前進、負の値で後退
-- `side`: 正の値で右旋回、負の値で左旋回
-- `timeout`: 0または未指定の場合はシングルショット制御、指定した場合は持続制御
+- `front`: 必須。前後方向制御値 (-100 〜 100)。正の値で前進、負の値で後退
+- `side`: 必須。左右方向制御値 (-100 〜 100)。正の値で右旋回、負の値で左旋回
+- `timeout`: オプション。持続時間(ms)、0または未指定でシングルショット制御、指定した場合は持続制御
 
 **レスポンス例:**
 ```json
@@ -214,24 +305,45 @@ WHILLの電源をON/OFFします。
 }
 ```
 
-#### 3.2.2. 速度制御
+#### 4.2.2. 速度制御
 速度値による移動制御を行います。
 
 - **エンドポイント**: `POST /api/v1/whill/motion/velocity`
 - **説明**: 速度制御（シングルショットまたは持続制御）
 
 **リクエストパラメータ:**
+
+**JSON Schema:**
 ```json
 {
-  "front": number,   // 必須: 前後方向速度 (-500 〜 1500)
-  "side": number,    // 必須: 左右旋回速度 (-750 〜 750)
-  "timeout": number  // オプション: 持続時間(ms)、0または未指定でシングルショット
+  "type": "object",
+  "required": ["front", "side"],
+  "properties": {
+    "front": {
+      "type": "number",
+      "minimum": -500,
+      "maximum": 1500,
+      "description": "前後方向速度。単位：0.004[km/h]相当"
+    },
+    "side": {
+      "type": "number",
+      "minimum": -750,
+      "maximum": 750,
+      "description": "左右旋回速度。単位：0.004[km/h]相当"
+    },
+    "timeout": {
+      "type": "number",
+      "minimum": 0,
+      "description": "持続時間(ms)。0または未指定でシングルショット制御"
+    }
+  }
 }
 ```
 
 **パラメータ詳細:**
-- `front`: 前後方向の速度値（単位：0.004[km/h]相当）
-- `side`: 左右旋回の速度値（単位：0.004[km/h]相当）
+- `front`: 必須。前後方向速度 (-500 〜 1500)。単位：0.004[km/h]相当
+- `side`: 必須。左右旋回速度 (-750 〜 750)。単位：0.004[km/h]相当
+- `timeout`: オプション。持続時間(ms)、0または未指定でシングルショット制御、指定した場合は持続制御
 
 **レスポンス例:**
 ```json
@@ -248,7 +360,7 @@ WHILLの電源をON/OFFします。
 }
 ```
 
-#### 3.2.3. 制御解除
+#### 4.2.3. 制御解除
 アクティブな持続制御を解除します。
 
 - **エンドポイント**: `POST /api/v1/whill/motion/release`
@@ -271,9 +383,9 @@ WHILLの電源をON/OFFします。
 
 ---
 
-### 3.3. データストリーミング
+### 4.3. データストリーミング
 
-#### 3.3.1. データストリーム開始
+#### 4.3.1. データストリーム開始
 WHILLからのデータストリーミングを開始します。
 
 - **エンドポイント**: `POST /api/v1/whill/data-streams/start`
@@ -282,13 +394,40 @@ WHILLからのデータストリーミングを開始します。
   - `data_set_number`: 1 => motor/batteryなど動的に変化するステータスのストリーミング
 
 **リクエストパラメータ:**
+
+**JSON Schema:**
 ```json
 {
-  "interval_msec": integer,    // 必須: 送信間隔(ms) デフォルト:1000, 最小:10
-  "data_set_number": integer,  // 必須: データセット番号(0または1) デフォルト:1
-  "speed_mode": integer       // オプション: スピードモード(0-5) デフォルト:4
+  "type": "object",
+  "required": ["interval_msec", "data_set_number"],
+  "properties": {
+    "interval_msec": {
+      "type": "integer",
+      "minimum": 10,
+      "default": 1000,
+      "description": "送信間隔(ms)"
+    },
+    "data_set_number": {
+      "type": "integer",
+      "enum": [0, 1],
+      "default": 1,
+      "description": "データセット番号(0または1)"
+    },
+    "speed_mode": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 4,
+      "description": "スピードモード(0-5)"
+    }
+  }
 }
 ```
+
+**パラメータ詳細:**
+- `interval_msec`: 必須。送信間隔(ms) デフォルト:1000, 最小:10
+- `data_set_number`: 必須。データセット番号(0または1) デフォルト:1
+- `speed_mode`: オプション。スピードモード(0-5) デフォルト:4
 
 **レスポンス例:**
 ```json
@@ -304,7 +443,7 @@ WHILLからのデータストリーミングを開始します。
 }
 ```
 
-#### 3.3.2. データストリーム停止
+#### 4.3.2. データストリーム停止
 アクティブなデータストリーミングを停止します。
 
 - **エンドポイント**: `POST /api/v1/whill/data-streams/stop`
@@ -324,9 +463,9 @@ WHILLからのデータストリーミングを開始します。
 
 ---
 
-### 3.4. ステータス監視
+### 4.4. ステータス監視
 
-#### 3.4.1. ステータス取得
+#### 4.4.1. ステータス取得
 WHILLの包括的なステータス情報を取得します。
 
 - **エンドポイント**: `GET /api/v1/whill/status`
@@ -365,7 +504,7 @@ WHILLの包括的なステータス情報を取得します。
 }
 ```
 
-#### 3.4.2. バッテリー情報取得
+#### 4.4.2. バッテリー情報取得
 バッテリー関連の情報を取得します。
 
 - **エンドポイント**: `GET /api/v1/whill/battery`
@@ -384,7 +523,7 @@ WHILLの包括的なステータス情報を取得します。
 }
 ```
 
-#### 3.4.3. モーター情報取得
+#### 4.4.3. モーター情報取得
 左右モーターの詳細情報を取得します。
 
 - **エンドポイント**: `GET /api/v1/whill/motors`
@@ -411,31 +550,107 @@ WHILLの包括的なステータス情報を取得します。
 
 ---
 
-### 3.5. 設定
+### 4.5. 設定
 
-#### 3.5.1. スピードプロファイル設定
+#### 4.5.1. スピードプロファイル設定
 WHILLのスピードプロファイルを設定します。
 
 - **エンドポイント**: `POST /api/v1/whill/speed-profiles`
 - **説明**: 指定したスピードモードのプロファイル設定
 
 **リクエストパラメータ:**
+
+**JSON Schema:**
 ```json
 {
-  "speed_mode": integer,  // 必須: スピードモード(0-5)
-  "profile": {
-    "forward_speed": number,        // 必須: 最大前進速度(8-60)
-    "forward_acceleration": number, // 必須: 前進加速度(10-64)
-    "forward_deceleration": number, // 必須: 前進減速度(40-160)
-    "reverse_speed": number,        // 必須: 最大後退速度(8-30)
-    "reverse_acceleration": number, // 必須: 後退加速度(10-50)
-    "reverse_deceleration": number, // 必須: 後退減速度(40-80)
-    "turn_speed": number,           // 必須: 最大旋回速度(8-35)
-    "turn_acceleration": number,    // 必須: 旋回加速度(10-60)
-    "turn_deceleration": number     // 必須: 旋回減速度(40-160)
+  "type": "object",
+  "required": ["speed_mode", "profile"],
+  "properties": {
+    "speed_mode": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "スピードモード(0-5)"
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "forward_speed", "forward_acceleration", "forward_deceleration",
+        "reverse_speed", "reverse_acceleration", "reverse_deceleration",
+        "turn_speed", "turn_acceleration", "turn_deceleration"
+      ],
+      "properties": {
+        "forward_speed": {
+          "type": "number",
+          "minimum": 8,
+          "maximum": 60,
+          "description": "最大前進速度"
+        },
+        "forward_acceleration": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 64,
+          "description": "前進加速度"
+        },
+        "forward_deceleration": {
+          "type": "number",
+          "minimum": 40,
+          "maximum": 160,
+          "description": "前進減速度"
+        },
+        "reverse_speed": {
+          "type": "number",
+          "minimum": 8,
+          "maximum": 30,
+          "description": "最大後退速度"
+        },
+        "reverse_acceleration": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 50,
+          "description": "後退加速度"
+        },
+        "reverse_deceleration": {
+          "type": "number",
+          "minimum": 40,
+          "maximum": 80,
+          "description": "後退減速度"
+        },
+        "turn_speed": {
+          "type": "number",
+          "minimum": 8,
+          "maximum": 35,
+          "description": "最大旋回速度"
+        },
+        "turn_acceleration": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 60,
+          "description": "旋回加速度"
+        },
+        "turn_deceleration": {
+          "type": "number",
+          "minimum": 40,
+          "maximum": 160,
+          "description": "旋回減速度"
+        }
+      }
+    }
   }
 }
 ```
+
+**パラメータ詳細:**
+- `speed_mode`: 必須。スピードモード(0-5)
+- `profile.forward_speed`: 必須。最大前進速度(8-60)
+- `profile.forward_acceleration`: 必須。前進加速度(10-64)
+- `profile.forward_deceleration`: 必須。前進減速度(40-160)
+- `profile.reverse_speed`: 必須。最大後退速度(8-30)
+- `profile.reverse_acceleration`: 必須。後退加速度(10-50)
+- `profile.reverse_deceleration`: 必須。後退減速度(40-80)
+- `profile.turn_speed`: 必須。最大旋回速度(8-35)
+- `profile.turn_acceleration`: 必須。旋回加速度(10-60)
+- `profile.turn_deceleration`: 必須。旋回減速度(40-160)
 
 **レスポンス例:**
 ```json
@@ -460,7 +675,7 @@ WHILLのスピードプロファイルを設定します。
 }
 ```
 
-#### 3.5.2. スピードプロファイル取得
+#### 4.5.2. スピードプロファイル取得
 WHILLに設定されている全てのスピードプロファイルを取得します。
 
 - **エンドポイント**: `GET /api/v1/whill/speed-profiles`
@@ -508,19 +723,39 @@ WHILLに設定されている全てのスピードプロファイルを取得し
 }
 ```
 
-#### 3.5.3. バッテリー節約設定
+#### 4.5.3. バッテリー節約設定
 WHILLのバッテリー節約機能を設定します。
 
 - **エンドポイント**: `POST /api/v1/whill/battery/saving`
 - **説明**: バッテリー残量が低い場合の動作設定
 
 **リクエストパラメータ:**
+
+**JSON Schema:**
 ```json
 {
-  "low_battery_level": integer,  // 必須: 節約モード開始レベル(1-90) デフォルト:19
-  "sounds_buzzer": boolean       // 必須: 低バッテリー時のブザー音 デフォルト:true
+  "type": "object",
+  "required": ["low_battery_level", "sounds_buzzer"],
+  "properties": {
+    "low_battery_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 90,
+      "default": 19,
+      "description": "節約モード開始レベル"
+    },
+    "sounds_buzzer": {
+      "type": "boolean",
+      "default": true,
+      "description": "低バッテリー時のブザー音"
+    }
+  }
 }
 ```
+
+**パラメータ詳細:**
+- `low_battery_level`: 必須。節約モード開始レベル(1-90) デフォルト:19
+- `sounds_buzzer`: 必須。低バッテリー時のブザー音 デフォルト:true
 
 **レスポンス例:**
 ```json
@@ -537,9 +772,9 @@ WHILLのバッテリー節約機能を設定します。
 
 ---
 
-### 3.6. 診断
+### 4.6. 診断
 
-#### 3.6.1. 接続テスト
+#### 4.6.1. 接続テスト
 WHILLとの接続状態をテストします。
 
 - **エンドポイント**: `GET /api/v1/whill/diagnostics/connection`
@@ -563,23 +798,31 @@ WHILLとの接続状態をテストします。
 
 ---
 
-## 4. エラーコード詳細
+## 5. エラーコード詳細
 
-### 4.1. 400 Bad Request
+### 5.1. 400 Bad Request
 - **原因**: パラメータエラー、値の範囲外、必須パラメータ未指定
 - **対処**: リクエストパラメータを確認し、正しい値で再送信
 
-### 4.2. 500 Internal Server Error
+### 5.2. 500 Internal Server Error
 - **原因**: デバイス未接続、内部処理エラー
 - **対処**: デバイス接続を確認し、しばらく待ってから再試行
 
 ---
 
-## 5. 使用例
+## 6. 使用例
 
-### 5.1. curl を使用した基本的な操作
+### 6.1. 基本的な操作
+- **電源ON**: `POST /api/v1/whill/power` に `{"power_on": true}` を送信
+- **データストリーミング開始**: `POST /api/v1/whill/data-streams/start` を送信
+- **前進**: `POST /api/v1/whill/motion/joystick` に `{"front": 20, "side": 0, "timeout": 2000}` を送信
+- **状態確認**: `GET /api/v1/whill/status` で現在の状態を取得
+- **停止**: `POST /api/v1/whill/motion/release` を送信
+- **電源OFF**: `POST /api/v1/whill/power` に `{"power_on": false}` を送信
 
-#### 5.1.1. 電源ON
+### 6.2. curl を使用した基本的な操作
+
+#### 6.2.1. 電源ON
 
 ```bash
 curl -X POST "http://localhost:5000/api/v1/whill/power" \
@@ -588,7 +831,7 @@ curl -X POST "http://localhost:5000/api/v1/whill/power" \
   -d "{ \"power_on\": true }"
 ```
 
-#### 5.1.2. データストリーミング開始
+#### 6.2.2. データストリーミング開始
 ```bash
 curl -X POST "http://localhost:5000/api/v1/whill/data-streams/start" \
   -H "accept: application/json" \
@@ -600,7 +843,7 @@ curl -X POST "http://localhost:5000/api/v1/whill/data-streams/start" \
   }"
 ```
 
-#### 5.1.3. 前進（2秒間持続）
+#### 6.2.3. 前進（2秒間持続）
 ```bash
 curl -X POST "http://localhost:5000/api/v1/whill/motion/joystick" \
   -H "accept: application/json" \
@@ -612,19 +855,19 @@ curl -X POST "http://localhost:5000/api/v1/whill/motion/joystick" \
   }"
 ```
 
-#### 5.1.4. 状態取得
+#### 6.2.4. 状態取得
 ```bash
 curl -X GET "http://localhost:5000/api/v1/whill/status" \
   -H "accept: application/json"
 ```
 
-#### 5.1.5. 制御解除
+#### 6.2.5. 制御解除
 ```bash
 curl -X POST "http://localhost:5000/api/v1/whill/motion/release" \
   -H "accept: application/json"
 ```
 
-#### 5.1.6. 電源OFF
+#### 6.2.6. 電源OFF
 ```bash
 curl -X POST "http://localhost:5000/api/v1/whill/power" \
   -H "accept: application/json" \
@@ -634,9 +877,9 @@ curl -X POST "http://localhost:5000/api/v1/whill/power" \
 
 ---
 
-## 6. 依存ライブラリのライセンス
+## 7. 依存ライブラリのライセンス
 
-### 6.1. メインアプリケーション依存関係
+### 7.1. メインアプリケーション依存関係
 このプロジェクトは以下のオープンソースライブラリを使用しています：
 
 | ライブラリ | バージョン | ライセンス | 説明 |
@@ -652,7 +895,7 @@ curl -X POST "http://localhost:5000/api/v1/whill/power" \
 - [flasgger](https://github.com/flasgger/flasgger/blob/master/LICENSE)
 - [waitress](https://github.com/Pylons/waitress/blob/main/LICENSE.txt)
 
-### 6.2. 開発ツール依存関係
+### 7.2. 開発ツール依存関係
 開発用ツール（Swaggerドキュメント生成など）では以下のライブラリを使用しています：
 
 | ライブラリ | バージョン | ライセンス | 説明 |
@@ -666,12 +909,12 @@ curl -X POST "http://localhost:5000/api/v1/whill/power" \
 
 ---
 
-## 7. ライセンス
+## 8. ライセンス
 このプロジェクトはMITライセンスの下で公開されています。詳細は`LICENSE`ファイルを参照してください。
 
 ---
 
-## 8. 免責事項
+## 9. 免責事項
 このソフトウェアは「現状のまま」提供され、明示的または暗黙的な保証は一切ありません。WHILLデバイスの使用に関連するリスクは、ユーザーが自己責任で負うものとします。
 
 
